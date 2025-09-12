@@ -2,11 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import type { SummariesQuery } from '@/lib/validation';
 
+import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
+import { dbConnect } from '@/lib/mongoose';
 import { SummariesQuerySchema, parseOrThrow } from '@/lib/validation';
 import { Heartbeat } from '@/models/heartbeat';
 
 export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
+    const apiKey = extractApiKeyFromRequest(request);
+    const user = await validateApiKeyAndFindUser(apiKey);
+
     const { searchParams } = new URL(request.url);
     const query = parseOrThrow<SummariesQuery>(SummariesQuerySchema, {
       start: searchParams.get('start'),
@@ -17,8 +24,9 @@ export async function GET(request: NextRequest) {
     const startSec = Number(query.start);
     const endSec = Number(query.end);
 
-    // 2. Загрузить heartbeats за диапазон, отсортировать по времени
+    // 2. Загрузить heartbeats за диапазон для конкретного пользователя, отсортировать по времени
     const heartbeats = await Heartbeat.find({
+      user: user._id,
       time: { $gte: startSec, $lte: endSec },
     }).sort({ time: 1 });
 
@@ -55,14 +63,10 @@ export async function GET(request: NextRequest) {
       activeTime: activeTimeStr,
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error processing summaries request:', error);
-    if ((error as any)?.details) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request', details: (error as any).details },
-        { status: 400 }
-      );
+    if (error instanceof CustomError) {
+      return NextResponse.json({ success: false, ...error }, { status: error.code });
     }
-    return NextResponse.json({ success: false, error: 'Invalid request' }, { status: 400 });
+
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

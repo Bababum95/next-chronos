@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 export type HeartbeatDoc = {
+  user: mongoose.Types.ObjectId;
   time: number;
   entity: string;
   is_write: boolean;
@@ -20,6 +21,7 @@ export type HeartbeatDoc = {
 
 const HeartbeatSchema = new Schema<HeartbeatDoc>(
   {
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     time: { type: Number, required: true },
     entity: { type: String, required: true },
     is_write: { type: Boolean, required: true },
