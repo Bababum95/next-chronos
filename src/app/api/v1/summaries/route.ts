@@ -20,21 +20,18 @@ export async function GET(request: NextRequest) {
       end: searchParams.get('end'),
     });
 
-    // 1. Принять start и end как UNIX timestamp в секундах
     const startSec = Number(query.start);
     const endSec = Number(query.end);
 
-    // 2. Загрузить heartbeats за диапазон для конкретного пользователя, отсортировать по времени
     const heartbeats = await Heartbeat.find({
       user: user._id,
       time: { $gte: startSec, $lte: endSec },
     }).sort({ time: 1 });
 
-    // 3. Разбить диапазон на интервалы по 300 секунд (5 минут)
+    // Calculate intervals of 300 seconds (5 minutes)
     const intervalSec = 300;
     const totalIntervals = Math.ceil((endSec - startSec) / intervalSec);
 
-    // 4. Собрать Set активных интервалов на основе hb.time
     const activeIntervalSet = new Set<number>();
     for (const hb of heartbeats) {
       const hbTs = Math.floor(hb.time);
@@ -45,9 +42,17 @@ export async function GET(request: NextRequest) {
     }
     const activeIntervals = activeIntervalSet.size;
 
-    // Вычисление общего времени активности в секундах
-    const activeTimeSec = activeIntervals * intervalSec;
-    // Преобразование времени в строку
+    // Adjust activeTimeSec based on last heartbeat elapsed time
+    let activeTimeSec = activeIntervals * intervalSec;
+    const lastHb = heartbeats[heartbeats.length - 1];
+    if (lastHb) {
+      const elapsedSec = Math.floor(Date.now() / 1000) - Math.floor(lastHb.time);
+      if (elapsedSec < intervalSec) {
+        activeTimeSec = (activeIntervals - 1) * intervalSec + Math.floor(elapsedSec / 60) * 60;
+      }
+    }
+
+    // Convert active time to a string representation
     let activeTimeStr: string;
     if (activeTimeSec >= 3600) {
       const hours = Math.floor(activeTimeSec / 3600);
