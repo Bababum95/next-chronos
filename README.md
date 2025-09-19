@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+yarn dev
 
-## Getting Started
+# next-chronos
 
-First, run the development server:
+Лёгкий фронтенд для Chronos — приложение на Next.js (App Router). Включает страницы для дашборда, API-документации, аутентификации и отображения временных рядов.
+
+Этот README кратко описывает, как запустить проект локально, собрать для продакшена и где искать полезные файлы в пакете `packages/next-chronos`.
+
+## Быстрый старт
+
+1. Установите зависимости в корне монорепозитория (рекомендуется pnpm):
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Перейдите в пакет и запустите dev-сервер:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd packages/next-chronos
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Откройте http://localhost:3000 — приложение должно быть доступно.
 
-## Learn More
+Примечание: в скриптах пакета используется Turbopack для разработки и сборки, поэтому команды `dev` и `build` передают флаг `--turbopack`.
 
-To learn more about Next.js, take a look at the following resources:
+## Скрипты (package.json)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `dev` — запуск dev-сервера (Next.js с Turbopack)
+- `build` — сборка продакшен-версии (Next.js с Turbopack)
+- `start` — запуск сервера после сборки (`next start`)
+- `clean` — удаление артефактов сборки (`.next`, `out`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Используйте менеджер пакетов проекта (pnpm/yarn/npm) из корня монорепо или внутри папки пакета.
 
-## Deploy on Vercel
+## Переменные окружения
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Проект может читать переменные окружения для подключения к бэкенду и базе данных (например, адрес API, строка подключения к MongoDB и т.д.). В репозитории примеров переменных окружения нет, поэтому создайте `.env.local` в `packages/next-chronos` с нужными значениями, например:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+MONGODB_URI=mongodb://localhost:27017/chronos
+NEXT_PUBLIC_APP_NAME=Chronos
+```
+
+Обратите внимание, что переменные начинающиеся с `NEXT_PUBLIC_` доступны на клиенте.
+
+## Структура проекта (важные файлы)
+
+- `app/` — маршруты и страницы (App Router). Содержит `page.tsx`, `layout.tsx`, а также `api/` роуты для серверных эндпоинтов.
+- `src/components/` — переиспользуемые UI-компоненты и формы.
+- `src/lib/` — вспомогательные библиотеки: auth, api-клиенты, Mongo подключение, хуки.
+- `public/` — статические ресурсы (иконки, изображения).
+- `tailwind.config.js`, `postcss.config.js` — конфигурация TailwindCSS.
+
+## Разработка и интеграция
+
+- Для локальной разработки запустите `pnpm dev` в пакете. Если бэкенд Chronos находится в другом пакете (например `vscode-chronos` или отдельном сервисе), запустите его параллельно и настройте `NEXT_PUBLIC_API_URL`.
+- Компоненты используют TailwindCSS — при изменении стилей перезапуск сервера не требуется.
+
+## Тесты
+
+В пакете нет настроенных unit-тестов по умолчанию. Если хотите добавить тесты, рекомендую Jest + React Testing Library или Vitest.
+
+## Сборка и деплой
+
+Соберите приложение командой:
+
+```bash
+pnpm build
+```
+
+После сборки можно запустить сервер:
+
+```bash
+pnpm start
+```
+
+Рекомендуемый деплой: Vercel (Next.js полностью поддерживается). Другие варианты — Docker или любой хостинг, который может запускать Node.js.
+
+## Вклад и разработка
+
+1. Сделайте форк/ветку в репозитории.
+2. Откройте PR с описанием изменений.
+
+Стремитесь к мелким и понятным PR; добавляйте тесты для новых компонентов и конечных точек API.
+
+## Полезные ссылки
+
+- Next.js: https://nextjs.org/
+- TailwindCSS: https://tailwindcss.com/
+- Recharts (используется для графиков): https://recharts.org/
+

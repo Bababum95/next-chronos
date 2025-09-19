@@ -2,9 +2,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import type { Metadata, Viewport } from 'next';
 
-import { Footer } from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
-
 import './globals.css';
 
 const geistSans = Geist({
@@ -51,7 +49,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <div className="flex min-h-screen flex-col">
           <main className="flex-1">{children}</main>
-          <Footer />
           <Toaster />
         </div>
       </body>
