@@ -12,6 +12,15 @@ export async function GET() {
         description: 'Current server',
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
     paths: {
       '/ping': {
         get: {
@@ -52,6 +61,7 @@ export async function GET() {
           summary: 'Submit heartbeats',
           description: 'Accepts a batch of editor/file activity heartbeats.',
           tags: ['ingest'],
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: {
@@ -65,18 +75,33 @@ export async function GET() {
                       items: {
                         type: 'object',
                         properties: {
-                          timestamp: {
-                            oneOf: [{ type: 'number' }, { type: 'string' }],
-                          },
-                          project: { type: 'string' },
+                          time: { type: 'number' },
+                          entity: { type: 'string' },
+                          is_write: { type: 'boolean' },
+                          lineno: { type: 'number' },
+                          cursorpos: { type: 'number' },
+                          lines_in_file: { type: 'number' },
+                          alternate_project: { type: 'string' },
+                          project_folder: { type: 'string' },
+                          project_root_count: { type: 'number' },
+                          git_branch: { type: 'string' },
                           language: { type: 'string' },
-                          branch: { type: 'string' },
-                          machine: { type: 'string' },
-                          editor: { type: 'string' },
-                          file: { type: 'string' },
-                          duration: { type: 'number' },
+                          category: {
+                            type: 'string',
+                            enum: ['debugging', 'ai coding', 'building', 'code reviewing'],
+                          },
+                          ai_line_changes: { type: 'number' },
+                          human_line_changes: { type: 'number' },
+                          is_unsaved_entity: { type: 'boolean' },
                         },
-                        required: ['timestamp'],
+                        required: [
+                          'time',
+                          'entity',
+                          'is_write',
+                          'lineno',
+                          'cursorpos',
+                          'lines_in_file',
+                        ],
                         additionalProperties: false,
                       },
                     },
@@ -89,7 +114,17 @@ export async function GET() {
                     summary: 'Minimal batch',
                     value: {
                       heartbeats: [
-                        { timestamp: 1710000000, project: 'demo', file: 'src/index.ts' },
+                        {
+                          time: Date.now() / 1000,
+                          entity: 'src/index.ts',
+                          is_write: true,
+                          lineno: 10,
+                          cursorpos: 5,
+                          lines_in_file: 120,
+                          language: 'TypeScript',
+                          category: 'building',
+                          project_folder: 'swagger/api-docs',
+                        },
                       ],
                     },
                   },

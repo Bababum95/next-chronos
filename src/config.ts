@@ -3,6 +3,7 @@ import { z } from 'zod';
 if (typeof window === 'undefined') {
   const envSchema = z.object({
     MONGODB_URI: z.string({ message: 'MONGODB_URI is required' }),
+    INTERVAL_SEC: z.string({ message: 'INTERVAL_SEC is required' }),
   });
 
   const parsedEnv = envSchema.safeParse(process.env);
@@ -16,4 +17,5 @@ if (typeof window === 'undefined') {
 
 export const env = {
   mongoUri: process.env.MONGODB_URI as string,
+  intervalSec: Number(process.env.INTERVAL_SEC),
 };

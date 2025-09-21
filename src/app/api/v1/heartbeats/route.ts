@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { HeartbeatsInput } from '@/lib/validation';
 
 import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
-import { dbConnect, Heartbeat } from '@/lib/mongoose';
+import { dbConnect, Heartbeat, HourlyActivity } from '@/lib/mongoose';
 import { HeartbeatsSchema, parseOrThrow } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
     const body = parseOrThrow<HeartbeatsInput>(HeartbeatsSchema, json);
 
     if (body.heartbeats?.length) {
+      const heartbeats = [...body.heartbeats].sort((a, b) => a.time - b.time);
+
       await Heartbeat.insertMany(
         body.heartbeats.map((heartbeat) => ({
           ...heartbeat,
@@ -24,12 +26,18 @@ export async function POST(request: NextRequest) {
         })),
         { ordered: false }
       );
+
+      await HourlyActivity.updateFromHeartbeats(
+        user._id,
+        heartbeats[0].time,
+        heartbeats[heartbeats.length - 1].time
+      );
     }
 
     return NextResponse.json({
       success: true,
       message: 'Heartbeats saved',
-      count: body.heartbeats.length,
+      count: body.heartbeats?.length,
     });
   } catch (error) {
     // eslint-disable-next-line no-console
