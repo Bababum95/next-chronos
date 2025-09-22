@@ -1,9 +1,8 @@
-import styles from './page.module.css';
-
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <h1>Hello World</h1>
+    <div className="px-4 py-12">
+      <p>Hello Chronos</p>
+      <p>Welcome to Next.js!</p>
     </div>
   );
 }

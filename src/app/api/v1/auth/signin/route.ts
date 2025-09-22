@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { createSuccessResponse } from '@/lib/api/types';
 import { dbConnect, User } from '@/lib/mongoose';
 import { parseOrThrow, SignInInput, SignInSchema } from '@/lib/validation';
 
@@ -36,22 +37,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return success response (without password)
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Login successful',
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          isEmailVerified: user.isEmailVerified,
-          createdAt: user.createdAt,
-          apiKey: user.apiKey,
-        },
-      },
-      { status: 200 }
-    );
+    const userData = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isEmailVerified: user.isEmailVerified,
+      createdAt: user.createdAt,
+      apiKey: user.apiKey,
+    };
+
+    const successResponse = createSuccessResponse('Login successful', userData);
+    return NextResponse.json(successResponse, { status: 200 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // eslint-disable-next-line no-console

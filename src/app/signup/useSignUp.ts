@@ -1,9 +1,13 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { SignUpResponse } from '@/lib/api/types';
-import { useForm } from '@/lib/hooks/useForm';
+import { tokenStorage } from '@/lib/utils/auth';
+import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import {
   FieldError,
   SignUpInput,
@@ -22,21 +26,28 @@ type SignUpFormData = {
   terms: boolean;
 };
 
+const INITIAL_STATE = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  terms: false,
+};
+
+// Sign up mutation function
+const signUpUser = createAuthenticatedMutation<SignUpResponse, SignUpInput>('/api/v1/auth/signup');
+
 export const useSignUp = () => {
-  const initialData: SignUpFormData = {
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    terms: false,
-  };
+  const router = useRouter();
+  const [formData, setFormData] = useState<SignUpFormData>(INITIAL_STATE);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const validators: Record<keyof SignUpFormData, (value: unknown) => FieldError | null> = {
     name: (value: unknown) => validateName(value as string),
     email: (value: unknown) => validateEmail(value as string),
     password: (value: unknown) => validatePassword(value as string),
     confirmPassword: (value: unknown) => {
-      if (!formData?.password) {
+      if (!formData.password) {
         return { field: 'confirmPassword', message: 'Confirm password is required' };
       }
       return validatePasswordMatch(formData.password, value as string);
@@ -44,68 +55,114 @@ export const useSignUp = () => {
     terms: (value: unknown) => validateTerms(value as boolean),
   };
 
-  const onSubmit = async (data: SignUpFormData): Promise<SignUpResponse> => {
-    const signUpData: SignUpInput = {
-      name: data.name.trim(),
-      email: data.email.toLowerCase().trim(),
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      terms: data.terms,
-    };
+  const signUpMutation = useMutation({
+    mutationFn: signUpUser,
+    onSuccess: (response: SignUpResponse) => {
+      if (response.success && response.data?.apiKey) {
+        // Save token to cookies and redirect to dashboard
+        tokenStorage.setToken(response.data.apiKey, 7);
 
-    const response = await fetch('/api/v1/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signUpData),
-    });
-
-    return response.json();
-  };
-
-  const {
-    formData,
-    isLoading,
-    error,
-    fieldErrors,
-    success,
-    updateField,
-    handleSubmit,
-    resetForm,
-    setFieldError,
-    clearFieldError,
-  } = useForm({
-    initialData,
-    validators,
-    onSubmit,
-    redirectOnSuccess: '/login?message=Account created successfully. Please sign in.',
+        toast.success('Account created successfully!');
+        router.push('/dashboard');
+      } else {
+        toast.error(response.message || 'Sign up failed');
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Sign up failed');
+    },
   });
 
-  // Override the updateField to handle confirmPassword validation
-  const updateFieldWithValidation = (field: keyof SignUpFormData, value: string | boolean) => {
-    updateField(field, value);
+  const updateField = (field: keyof SignUpFormData, value: string | boolean) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Clear field error when user starts typing
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
 
     // If password is updated, re-validate confirmPassword
     if (field === 'password' && formData.confirmPassword) {
       const confirmError = validatePasswordMatch(value as string, formData.confirmPassword);
       if (confirmError) {
-        toast.error(confirmError.message);
-        setFieldError('confirmPassword', confirmError.message);
+        setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError.message }));
       } else {
-        clearFieldError('confirmPassword');
+        setFieldErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.confirmPassword;
+          return newErrors;
+        });
       }
     }
+  };
+
+  const validateForm = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    for (const [field, validator] of Object.entries(validators)) {
+      const error = validator(formData[field as keyof SignUpFormData]);
+      if (error) {
+        errors[error.field] = error.message;
+      }
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      Object.values(errors).forEach((error) => toast.error(error));
+      return;
+    }
+
+    setFieldErrors({});
+
+    const signUpData: SignUpInput = {
+      name: formData.name.trim(),
+      email: formData.email.toLowerCase().trim(),
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      terms: formData.terms,
+    };
+
+    signUpMutation.mutate(signUpData);
+  };
+
+  const resetForm = () => {
+    setFormData(INITIAL_STATE);
+    setFieldErrors({});
+  };
+
+  const setFieldError = (field: string, error: string) => {
+    setFieldErrors((prev) => ({ ...prev, [field]: error }));
+  };
+
+  const clearFieldError = (field: string) => {
+    setFieldErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      return newErrors;
+    });
   };
 
   return {
     formData,
     state: {
-      isLoading,
-      error,
+      isLoading: signUpMutation.isPending,
+      error: signUpMutation.error?.message || null,
       fieldErrors,
-      hasError: Object.keys(fieldErrors).length > 0 || !!error,
-      success,
+      hasError: Object.keys(fieldErrors).length > 0 || !!signUpMutation.error,
+      success: signUpMutation.isSuccess,
     },
-    updateField: updateFieldWithValidation,
+    updateField,
     handleSubmit,
     resetForm,
     setFieldError,

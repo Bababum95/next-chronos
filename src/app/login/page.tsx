@@ -38,7 +38,11 @@ export default function LoginPage() {
             error={state.fieldErrors.password}
           />
           <div className="flex items-center space-x-2">
-            <Checkbox id="remember" />
+            <Checkbox
+              id="remember"
+              checked={formData.remember}
+              onCheckedChange={(checked) => updateField('remember', checked)}
+            />
             <Label htmlFor="remember">Remember me</Label>
           </div>
           <Button

@@ -21,3 +21,21 @@ export const toHourStart = (timestamp: number): number => {
 export const toHourEnd = (timestamp: number): number => {
   return Math.ceil(normalizeTimestamp(timestamp) / 3600) * 3600 - 1;
 };
+
+/**
+ * Format duration in seconds to human readable format
+ * @param seconds - Duration in seconds
+ * @returns Formatted string like "2h 30m" or "45m"
+ */
+export const formatDuration = (seconds: number): string => {
+  if (seconds === 0) return '0m';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours === 0) {
+    return `${minutes}m`;
+  }
+
+  return `${hours}h ${minutes}m`;
+};

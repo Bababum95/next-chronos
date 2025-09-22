@@ -14,13 +14,14 @@ export async function GET() {
     ],
     components: {
       securitySchemes: {
-        bearerAuth: {
+        basicAuth: {
           type: 'http',
-          scheme: 'bearer',
+          scheme: 'basic',
+          description: 'Basic authentication',
         },
       },
     },
-    security: [{ bearerAuth: [] }],
+    security: [{ basicAuth: [] }],
     paths: {
       '/ping': {
         get: {
@@ -61,7 +62,7 @@ export async function GET() {
           summary: 'Submit heartbeats',
           description: 'Accepts a batch of editor/file activity heartbeats.',
           tags: ['ingest'],
-          security: [{ bearerAuth: [] }],
+          security: [{ basicAuth: [] }],
           requestBody: {
             required: true,
             content: {
@@ -190,6 +191,7 @@ export async function GET() {
           summary: 'Get summaries',
           description: 'Returns activity summaries for a given time range.',
           tags: ['summaries'],
+          security: [{ basicAuth: [] }],
           parameters: [
             {
               name: 'start',

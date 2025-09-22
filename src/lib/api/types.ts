@@ -13,10 +13,7 @@ export type User = {
 
 // Auth API types
 export type SignUpResponse = ApiResponse<User>;
-export type SignInResponse = ApiResponse<{
-  user: User;
-  token?: string;
-}>;
+export type SignInResponse = ApiResponse<User>;
 
 // Heartbeat types
 export type Heartbeat = {
@@ -44,19 +41,10 @@ export type HeartbeatsResponse = ApiResponse<{
 
 // Summary types
 export type Summary = {
-  date: string;
   totalTime: number;
-  projects: Array<{
-    name: string;
-    time: number;
-    languages: Array<{
-      name: string;
-      time: number;
-    }>;
-  }>;
 };
 
-export type SummariesResponse = ApiResponse<Summary[]>;
+export type SummariesResponse = ApiResponse<Summary>;
 
 // API Error types
 export type ApiError = {

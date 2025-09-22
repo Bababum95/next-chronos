@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
 
 import { Toaster } from '@/components/ui/toaster';
+import { QueryProvider } from '@/lib/query-client';
 import './globals.css';
 
 const geistSans = Geist({
@@ -47,10 +48,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <div className="flex min-h-screen flex-col">
-          <main className="flex-1">{children}</main>
-          <Toaster />
-        </div>
+        <QueryProvider>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
+            <Toaster />
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );
