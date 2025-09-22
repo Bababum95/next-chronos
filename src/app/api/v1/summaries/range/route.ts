@@ -5,6 +5,7 @@ import type { SummariesQuery } from '@/lib/validation';
 import { Activity, createSuccessResponse, SummariesRangeResponse } from '@/lib/api/types';
 import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
 import { dbConnect, HourlyActivity } from '@/lib/mongoose';
+import { formatDuration } from '@/lib/utils/time';
 import { parseOrThrow, SummariesQuerySchema } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
@@ -34,10 +35,12 @@ export async function GET(request: NextRequest) {
 
     const totalTime = data.reduce((acc, curr) => acc + curr.time_spent, 0);
 
-    const response: SummariesRangeResponse['data'] = { totalTime };
+    const response: SummariesRangeResponse['data'] = {
+      totalTime,
+      totalTimeStr: formatDuration(totalTime),
+    };
 
     if (full) {
-      // группируем по timestamp
       const grouped = new Map<number, Activity[]>();
 
       for (const activity of data) {

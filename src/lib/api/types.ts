@@ -37,6 +37,7 @@ export type Activity = {
 export type SummariesResponse = ApiResponse<Summary>;
 export type SummariesRangeResponse = ApiResponse<{
   totalTime: number;
+  totalTimeStr: string;
   activities?: Activity[][];
 }>;
 

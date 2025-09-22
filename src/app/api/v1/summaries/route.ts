@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     const totalTime = data.reduce((acc, curr) => acc + curr.time_spent, 0);
 
-    const successResponse = createSuccessResponse(`${totalTime}`, { totalTime });
+    const successResponse = createSuccessResponse('Summaries fetched successfully', { totalTime });
     return NextResponse.json(successResponse, { status: 200 });
   } catch (error) {
     if (error instanceof CustomError) {
