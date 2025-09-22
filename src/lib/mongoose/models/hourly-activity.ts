@@ -6,8 +6,7 @@ import { calculateActiveTime, toHourEnd, toHourStart } from '@/lib/utils';
 
 export type HourlyActivityDoc = {
   user: mongoose.Types.ObjectId;
-  date: string; // YYYY-MM-DD
-  hour: number; // 0–23
+  timestamp: number; // unix, начало часа
   composite_key: string;
   alternate_project?: string;
   project_folder?: string;
@@ -31,22 +30,7 @@ const HourlyActivitySchema = new Schema<HourlyActivityDoc>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     composite_key: { type: String, index: true, unique: true },
-    date: {
-      type: String,
-      required: true,
-      validate: {
-        validator(v: string) {
-          return /^\d{4}-\d{2}-\d{2}$/.test(v);
-        },
-        message: 'Date must be in YYYY-MM-DD format',
-      },
-    },
-    hour: {
-      type: Number,
-      required: true,
-      min: [0, 'Hour must be between 0 and 23'],
-      max: [23, 'Hour must be between 0 and 23'],
-    },
+    timestamp: { type: Number, required: true },
     alternate_project: { type: String },
     project_folder: { type: String },
     git_branch: { type: String },
@@ -64,7 +48,7 @@ const HourlyActivitySchema = new Schema<HourlyActivityDoc>(
   { timestamps: true }
 );
 
-HourlyActivitySchema.index({ user: 1, date: 1 });
+HourlyActivitySchema.index({ user: 1, timestamp: 1 });
 HourlyActivitySchema.index({ user: 1, composite_key: 1 });
 
 HourlyActivitySchema.statics.updateFromHeartbeats = async function (
@@ -73,13 +57,13 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
   end: number
 ) {
   // Compute startHour and endHour
-  const startHour = toHourStart(start);
-  const endHour = toHourEnd(end);
+  const startTimestamp = toHourStart(start);
+  const endTimestamp = toHourEnd(end);
 
   // Fetch heartbeats for the user in the time range
   const heartbeats = await Heartbeat.find({
     user: userId,
-    time: { $gte: startHour, $lte: endHour },
+    time: { $gte: startTimestamp, $lte: endTimestamp },
   }).sort({ time: 1 });
 
   // Group by category, language, project_folder, alternate_project, git_branch, hour (UTC), date (UTC)
@@ -91,8 +75,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
       project_folder: hb.project_folder || null,
       alternate_project: hb.alternate_project || null,
       git_branch: hb.git_branch || null,
-      hour: new Date(hb.time * 1000).getHours(),
-      date: new Date(hb.time * 1000).toISOString().split('T')[0],
+      timestamp: toHourStart(hb.time),
     });
 
     if (!groups.has(key)) groups.set(key, []);
@@ -104,7 +87,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
     const first = hb[0];
     if (!first) continue;
 
-    const activeTime = calculateActiveTime(hb, startHour, endHour);
+    const activeTime = calculateActiveTime(hb, startTimestamp, endTimestamp);
 
     await HourlyActivity.findOneAndUpdate(
       { composite_key: key },
@@ -117,8 +100,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
           project_folder: first.project_folder,
           alternate_project: first.alternate_project,
           git_branch: first.git_branch,
-          hour: new Date(first.time * 1000).getHours(),
-          date: new Date(first.time * 1000).toISOString().split('T')[0],
+          timestamp: toHourStart(first.time),
         },
       },
       { upsert: true, new: true }
