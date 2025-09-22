@@ -1,3 +1,4 @@
+import { HeartbeatDoc } from '@/lib/mongoose/models/heartbeat';
 import { ApiResponse, ValidationError } from '@/lib/validation';
 
 // User types
@@ -15,28 +16,9 @@ export type User = {
 export type SignUpResponse = ApiResponse<User>;
 export type SignInResponse = ApiResponse<User>;
 
-// Heartbeat types
-export type Heartbeat = {
-  time: number;
-  entity: string;
-  is_write: boolean;
-  lineno: number;
-  cursorpos: number;
-  lines_in_file: number;
-  alternate_project?: string;
-  git_branch?: string;
-  project_folder?: string;
-  project_root_count?: number;
-  language?: string;
-  category?: 'debugging' | 'ai coding' | 'building' | 'code reviewing';
-  ai_line_changes?: number;
-  human_line_changes?: number;
-  is_unsaved_entity?: boolean;
-};
-
 export type HeartbeatsResponse = ApiResponse<{
   processed: number;
-  heartbeats: Heartbeat[];
+  heartbeats: HeartbeatDoc[];
 }>;
 
 // Summary types
@@ -44,7 +26,19 @@ export type Summary = {
   totalTime: number;
 };
 
+export type Activity = {
+  alternate_project?: string;
+  git_branch?: string;
+  project_folder?: string;
+  time_spent: number;
+  timestamp: number;
+};
+
 export type SummariesResponse = ApiResponse<Summary>;
+export type SummariesRangeResponse = ApiResponse<{
+  totalTime: number;
+  activities?: Activity[][];
+}>;
 
 // API Error types
 export type ApiError = {

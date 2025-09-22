@@ -60,6 +60,7 @@ export const HeartbeatsSchema = z.object({
 export const SummariesQuerySchema = z.object({
   start: z.string().min(1),
   end: z.string().min(1),
+  full: z.string().optional(),
 });
 
 export const SignUpSchema = z
