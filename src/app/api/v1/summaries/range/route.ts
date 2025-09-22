@@ -19,12 +19,11 @@ export async function GET(request: NextRequest) {
     const query = parseOrThrow<SummariesQuery>(SummariesQuerySchema, {
       start: searchParams.get('start'),
       end: searchParams.get('end'),
-      full: searchParams.get('full'),
+      full: searchParams.get('full') === 'true',
     });
 
     const startSec = Number(query.start);
     const endSec = Number(query.end);
-    const full = query.full === 'true';
 
     const data = await HourlyActivity.find({
       user: user._id,
@@ -40,7 +39,7 @@ export async function GET(request: NextRequest) {
       totalTimeStr: formatDuration(totalTime),
     };
 
-    if (full) {
+    if (query.full) {
       const grouped = new Map<number, Activity[]>();
 
       for (const activity of data) {
