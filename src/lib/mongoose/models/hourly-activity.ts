@@ -87,7 +87,11 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
     const first = hb[0];
     if (!first) continue;
 
-    const activeTime = calculateActiveTime(hb, startTimestamp, endTimestamp);
+    let activeTime = calculateActiveTime(hb, startTimestamp, endTimestamp);
+
+    // Round up: if user was active at least 55 minutes in the hour,
+    // we count it as a full productive hour (3600 seconds).
+    if (activeTime > 3300) activeTime = 3600;
 
     await HourlyActivity.findOneAndUpdate(
       { composite_key: key },
