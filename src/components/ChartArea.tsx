@@ -18,11 +18,19 @@ type Props = {
   description?: string;
   extra?: ReactNode;
   chartConfig: ChartConfig;
+  formatValue?: (value: number | string) => string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   chartData: any[];
 };
 
-export const ChartArea: FC<Props> = ({ title, description, chartConfig, chartData, extra }) => {
+export const ChartArea: FC<Props> = ({
+  title,
+  description,
+  chartConfig,
+  chartData,
+  extra,
+  formatValue,
+}) => {
   const configArray = Object.entries(chartConfig);
 
   return (
@@ -59,15 +67,11 @@ export const ChartArea: FC<Props> = ({ title, description, chartConfig, chartDat
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-              }}
             />
             <ChartTooltip
               cursor={false}
               content={(props: CustomTooltipProps) => (
-                <ChartTooltipContent {...props} indicator="line" />
+                <ChartTooltipContent {...props} indicator="line" valueFormatter={formatValue} />
               )}
             />
             {configArray.map(([key, config]) => (

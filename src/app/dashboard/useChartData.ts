@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+
+import type { SummariesRangeResponse } from '@/lib/api/types';
 
 import { env } from '@/config';
 import { fetcher } from '@/lib/utils/fetcher';
@@ -10,11 +12,8 @@ const chartConfig = {
     label: 'Time',
     color: 'hsl(var(--chart-1))',
   },
-  // average: {
-  //   label: 'Average',
-  //   color: 'hsl(var(--chart-2))',
-  // },
 };
+
 type TimeRange = 'day' | 'week' | 'month';
 
 const timeRanges = [
@@ -30,8 +29,10 @@ function isTimeRange(value: string): value is TimeRange {
 export const useChartData = () => {
   const [timeRange, setTimeRange] = useState<TimeRange>('day');
 
-  const { data, isLoading, error } = useQuery({
+  const { data } = useQuery<SummariesRangeResponse>({
     queryKey: ['/api/v1/summaries/range', timeRange],
+    staleTime: env.intervalSec * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const start = dayjs().startOf(timeRange).unix();
       const end = dayjs().unix();
@@ -40,8 +41,6 @@ export const useChartData = () => {
       });
       return res;
     },
-    staleTime: env.intervalSec * 1000,
-    refetchOnWindowFocus: false,
   });
 
   const onChangeTimeRange = useCallback((value: string) => {
@@ -50,10 +49,32 @@ export const useChartData = () => {
     }
   }, []);
 
+  const workActivity = useMemo(() => {
+    if (!data?.data?.activities) return { chartData: [], totalTimeStr: '' };
+
+    return {
+      ...data.data,
+      chartData: data.data.activities.map((slot: any[]) => {
+        const totalTime = slot.reduce((sum, item) => sum + (item.time_spent || 0), 0);
+
+        const timestamp = slot[0]?.timestamp;
+        const date = timestamp
+          ? dayjs.unix(timestamp).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM')
+          : '';
+
+        return {
+          date,
+          current: totalTime,
+        };
+      }),
+    };
+  }, [data]);
+
   return {
     chartConfig,
     timeRanges,
     timeRange,
     onChangeTimeRange,
+    workActivity,
   };
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { createContext, useCallback, useContext, useId, useMemo } from 'react';
 import * as RechartsPrimitive from 'recharts';
 
 import type { LegendPayload } from 'recharts/types/component/DefaultLegendContent';
@@ -34,6 +34,7 @@ export type CustomTooltipProps = TooltipContentProps<ValueType, NameType> & {
   indicator?: 'line' | 'dot' | 'dashed';
   nameKey?: string;
   labelKey?: string;
+  valueFormatter?: (value: number | string) => string;
   labelFormatter?: (
     label: TooltipContentProps<number, string>['label'],
     payload: TooltipContentProps<number, string>['payload']
@@ -57,10 +58,10 @@ export type ChartLegendContentProps = {
   nameKey?: string;
 };
 
-const ChartContext = React.createContext<ChartContextProps | null>(null);
+const ChartContext = createContext<ChartContextProps | null>(null);
 
 function useChart() {
-  const context = React.useContext(ChartContext);
+  const context = useContext(ChartContext);
 
   if (!context) {
     throw new Error('useChart must be used within a <ChartContainer />');
@@ -79,7 +80,7 @@ export function ChartContainer({
   config: ChartConfig;
   children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
 }) {
-  const uniqueId = React.useId();
+  const uniqueId = useId();
   const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
 
   return (
@@ -140,6 +141,7 @@ export function ChartTooltipContent({
   indicator = 'dot',
   hideLabel = false,
   hideIndicator = false,
+  valueFormatter,
   labelFormatter,
   formatter,
   labelClassName,
@@ -149,7 +151,7 @@ export function ChartTooltipContent({
 }: CustomTooltipProps) {
   const { config } = useChart();
 
-  const tooltipLabel = React.useMemo(() => {
+  const tooltipLabel = useMemo(() => {
     if (hideLabel || !payload?.length) {
       return null;
     }
@@ -178,6 +180,17 @@ export function ChartTooltipContent({
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;
   }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
+
+  const formatValue = useCallback(
+    (value: number | string) => {
+      if (valueFormatter) {
+        return valueFormatter(value);
+      }
+
+      return value;
+    },
+    [valueFormatter]
+  );
 
   if (!active || !payload?.length) {
     return null;
@@ -245,7 +258,7 @@ export function ChartTooltipContent({
                     </div>
                     {item.value && (
                       <span className="text-foreground font-mono font-medium tabular-nums">
-                        {item.value.toLocaleString()}
+                        {formatValue(item.value)}
                       </span>
                     )}
                   </div>
