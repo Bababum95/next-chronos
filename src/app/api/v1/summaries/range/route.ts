@@ -71,19 +71,19 @@ export async function GET(request: NextRequest) {
       const grouped = new Map<number, Activity[]>();
 
       for (const activity of data) {
-        const normalizedTs = Math.floor(activity.timestamp / interval) * interval;
-        if (!grouped.has(normalizedTs)) {
-          grouped.set(normalizedTs, []);
+        // Calculate offset from startSec and find the interval bucket
+        const offset = activity.timestamp - startSec;
+        const bucket = startSec + Math.floor(offset / interval) * interval;
+
+        if (!grouped.has(bucket)) {
+          grouped.set(bucket, []);
         }
-        grouped.get(normalizedTs)!.push({ ...activity, timestamp: normalizedTs });
+        grouped.get(bucket)!.push({ ...activity, timestamp: bucket });
       }
 
       const activities: Activity[][] = [];
 
-      const startNorm = Math.floor(startSec / interval) * interval;
-      const endNorm = Math.floor(endSec / interval) * interval;
-
-      for (let ts = startNorm; ts <= endNorm; ts += interval) {
+      for (let ts = startSec; ts <= endSec; ts += interval) {
         if (grouped.has(ts)) {
           activities.push(grouped.get(ts)!);
         } else {

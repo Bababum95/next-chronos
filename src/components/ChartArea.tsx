@@ -61,13 +61,7 @@ export const ChartArea: FC<Props> = ({
               ))}
             </defs>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-            />
+            <XAxis dataKey="date" tickLine={false} axisLine={false} />
             <ChartTooltip
               cursor={false}
               content={(props: CustomTooltipProps) => (
@@ -78,7 +72,7 @@ export const ChartArea: FC<Props> = ({
               <Area
                 key={`area-${key}`}
                 dataKey={key}
-                type="natural"
+                type="bump"
                 fill={`url(#fill-${key})`}
                 stroke={config.color}
                 stackId="a"
