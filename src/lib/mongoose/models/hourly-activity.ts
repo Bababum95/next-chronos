@@ -2,6 +2,7 @@ import mongoose, { Model, Schema } from 'mongoose';
 
 import { Heartbeat } from './heartbeat';
 
+import { env, HOUR } from '@/config';
 import { calculateActiveTime, toHourEnd, toHourStart } from '@/lib/utils';
 
 export type HourlyActivityDoc = {
@@ -89,9 +90,9 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
 
     let activeTime = calculateActiveTime(hb, startTimestamp, endTimestamp);
 
-    // Round up: if user was active at least 55 minutes in the hour,
-    // we count it as a full productive hour (3600 seconds).
-    if (activeTime > 3300) activeTime = 3600;
+    // If active time in the hour is within one interval of a full hour,
+    // round it up to a full productive hour (3600 seconds).
+    if (activeTime > HOUR - env.intervalSec) activeTime = HOUR;
 
     await HourlyActivity.findOneAndUpdate(
       { composite_key: key },

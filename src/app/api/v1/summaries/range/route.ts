@@ -2,11 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import type { SummariesQuery } from '@/lib/validation';
 
+import { DAY, HOUR } from '@/config';
 import { Activity, createSuccessResponse, SummariesRangeResponse } from '@/lib/api/types';
 import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
 import { dbConnect, HourlyActivity } from '@/lib/mongoose';
 import { formatDuration } from '@/lib/utils/time';
 import { parseOrThrow, SummariesQuerySchema } from '@/lib/validation';
+
+function aggregateActivities(activities: Activity[][]): Activity[][] {
+  return activities.map((group) => {
+    const map = new Map<string, Activity>();
+
+    for (const act of group) {
+      // Build composite key (ignoring time_spent)
+      const key = JSON.stringify({
+        timestamp: act.timestamp,
+        alternate_project: act.alternate_project ?? null,
+        git_branch: act.git_branch ?? null,
+        project_folder: act.project_folder ?? null,
+      });
+
+      if (!map.has(key)) {
+        map.set(key, { ...act });
+      } else {
+        const existing = map.get(key)!;
+        existing.time_spent += act.time_spent;
+      }
+    }
+
+    return Array.from(map.values());
+  });
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,6 +50,8 @@ export async function GET(request: NextRequest) {
 
     const startSec = Number(query.start);
     const endSec = Number(query.end);
+    const range = endSec - startSec;
+    const interval = Number((searchParams.get('interval') ?? range < DAY) ? HOUR : DAY);
 
     const data = await HourlyActivity.find({
       user: user._id,
@@ -43,15 +71,19 @@ export async function GET(request: NextRequest) {
       const grouped = new Map<number, Activity[]>();
 
       for (const activity of data) {
-        if (!grouped.has(activity.timestamp)) {
-          grouped.set(activity.timestamp, []);
+        const normalizedTs = Math.floor(activity.timestamp / interval) * interval;
+        if (!grouped.has(normalizedTs)) {
+          grouped.set(normalizedTs, []);
         }
-        grouped.get(activity.timestamp)!.push(activity);
+        grouped.get(normalizedTs)!.push({ ...activity, timestamp: normalizedTs });
       }
 
       const activities: Activity[][] = [];
 
-      for (let ts = startSec; ts <= endSec; ts += 3600) {
+      const startNorm = Math.floor(startSec / interval) * interval;
+      const endNorm = Math.floor(endSec / interval) * interval;
+
+      for (let ts = startNorm; ts <= endNorm; ts += interval) {
         if (grouped.has(ts)) {
           activities.push(grouped.get(ts)!);
         } else {
@@ -59,7 +91,7 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      response.activities = activities;
+      response.activities = aggregateActivities(activities);
     }
 
     const successResponse = createSuccessResponse('Summaries fetched successfully', response);

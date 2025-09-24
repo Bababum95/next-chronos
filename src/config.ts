@@ -21,3 +21,5 @@ export const env = {
   intervalSec: Number(process.env.NEXT_PUBLIC_INTERVAL_SEC),
   tokenKey: process.env.NEXT_PUBLIC_TOKEN_KEY || 'auth-token',
 };
+export const HOUR = 3600;
+export const DAY = 24 * HOUR;
