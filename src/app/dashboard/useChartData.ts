@@ -29,7 +29,7 @@ function isTimeRange(value: string): value is TimeRange {
 export const useChartData = () => {
   const [timeRange, setTimeRange] = useState<TimeRange>('day');
 
-  const { data } = useQuery<SummariesRangeResponse>({
+  const { data, isLoading } = useQuery<SummariesRangeResponse>({
     queryKey: ['/api/v1/summaries/range', timeRange],
     staleTime: env.intervalSec * 1000,
     refetchOnWindowFocus: false,
@@ -76,5 +76,6 @@ export const useChartData = () => {
     timeRange,
     onChangeTimeRange,
     workActivity,
+    isLoading,
   };
 };

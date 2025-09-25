@@ -12,16 +12,16 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 type Props = {
-  children?: React.ReactNode;
+  extra?: React.ReactNode;
   breadcrumb?: {
     current: string;
     links?: { label: string; href: string }[];
   };
 };
 
-export const Header: FC<Props> = ({ breadcrumb }) => {
+export const Header: FC<Props> = ({ breadcrumb, extra }) => {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4" data-slot="header">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
       {breadcrumb && (
@@ -42,6 +42,7 @@ export const Header: FC<Props> = ({ breadcrumb }) => {
           </BreadcrumbList>
         </Breadcrumb>
       )}
+      {extra && <div className="ml-auto">{extra}</div>}
     </header>
   );
 };

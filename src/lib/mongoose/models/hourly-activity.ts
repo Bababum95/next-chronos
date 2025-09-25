@@ -92,7 +92,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
 
     // If active time in the hour is within one interval of a full hour,
     // round it up to a full productive hour (3600 seconds).
-    if (activeTime > HOUR - env.intervalSec) activeTime = HOUR;
+    if (activeTime >= HOUR - env.intervalSec) activeTime = HOUR;
 
     await HourlyActivity.findOneAndUpdate(
       { composite_key: key },
