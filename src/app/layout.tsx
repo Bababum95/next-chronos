@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import type { Metadata, Viewport } from 'next';
 
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { QueryProvider } from '@/lib/query-client';
 import './globals.css';
@@ -46,14 +47,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <QueryProvider>
-          <div className="flex min-h-screen flex-col">
-            <main className="flex-1">{children}</main>
-            <Toaster />
-          </div>
-        </QueryProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <QueryProvider>
+            <div className="flex min-h-screen flex-col">
+              <main className="flex-1">{children}</main>
+              <Toaster />
+            </div>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
