@@ -1,33 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { SummariesRangeResponse } from '@/lib/api/types';
-
+import { ChartConfig } from '@/components/ui/chart';
 import { env } from '@/config';
 import { fetcher } from '@/lib/utils/fetcher';
+import type { Activity, SummariesRangeResponse } from '@/lib/api/types';
 
-const chartConfig = {
-  current: {
-    label: 'Time',
-    color: 'hsl(var(--chart-1))',
-  },
+import { DASHBOARD_CONSTANTS } from './constants';
+import type {
+  ProjectActivityData,
+  ProjectChartDataPoint,
+  TimeRange,
+  WorkActivityData,
+} from './types';
+
+const isTimeRange = (value: string): value is TimeRange => {
+  return DASHBOARD_CONSTANTS.TIME_RANGES.some((range) => range.value === value);
 };
 
-type TimeRange = 'day' | 'week' | 'month';
+const formatDate = (timeRange: TimeRange, date?: number) => {
+  if (typeof date !== 'number') return '';
 
-const timeRanges = [
-  { value: 'day', label: 'Today' },
-  { value: 'week', label: 'Week' },
-  { value: 'month', label: 'Month' },
-];
-
-function isTimeRange(value: string): value is TimeRange {
-  return value === 'day' || value === 'week' || value === 'month';
-}
+  return dayjs.unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
+};
 
 export const useChartData = () => {
-  const [timeRange, setTimeRange] = useState<TimeRange>('day');
+  const [timeRange, setTimeRange] = useState<TimeRange>(DASHBOARD_CONSTANTS.DEFAULT_TIME_RANGE);
 
   const { data, isLoading } = useQuery<SummariesRangeResponse>({
     queryKey: ['/api/v1/summaries/range', timeRange],
@@ -49,33 +48,93 @@ export const useChartData = () => {
     }
   }, []);
 
-  const workActivity = useMemo(() => {
-    if (!data?.data?.activities) return { chartData: [], totalTimeStr: '' };
+  const workActivity = useMemo((): WorkActivityData => {
+    if (!data?.data?.activities) {
+      return {
+        chartData: [],
+        totalTimeStr: null,
+        chartConfig: DASHBOARD_CONSTANTS.CHART_CONFIG.WORK_ACTIVITY,
+      };
+    }
+
+    const chartData = data.data.activities.map((slot: Activity[]) => {
+      const totalTime = slot.reduce((sum, item) => sum + (item.time_spent || 0), 0);
+
+      return {
+        date: formatDate(timeRange, slot[0]?.timestamp),
+        current: totalTime,
+      };
+    });
 
     return {
-      ...data.data,
-      chartData: data.data.activities.map((slot: any[]) => {
-        const totalTime = slot.reduce((sum, item) => sum + (item.time_spent || 0), 0);
-
-        const timestamp = slot[0]?.timestamp;
-        const date = timestamp
-          ? dayjs.unix(timestamp).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM')
-          : '';
-
-        return {
-          date,
-          current: totalTime,
-        };
-      }),
+      chartData,
+      totalTimeStr: data.data.totalTimeStr || '',
+      chartConfig: DASHBOARD_CONSTANTS.CHART_CONFIG.WORK_ACTIVITY,
     };
-  }, [data]);
+  }, [data, timeRange]);
+
+  const projectActivity = useMemo((): ProjectActivityData => {
+    if (!data?.data?.activities) {
+      return { chartData: [], chartConfig: {} };
+    }
+
+    const projectTotals: Record<
+      string,
+      { label: string; color: string; values: { date: string; time: number }[] }
+    > = {};
+
+    for (const slot of data.data.activities) {
+      const timestamp = slot[0]?.timestamp;
+
+      for (const item of slot) {
+        const project = item.alternate_project || item.project_folder || 'unknown';
+        if (!projectTotals[project]) {
+          if (item.time_spent === 0) continue;
+          projectTotals[project] = {
+            label: project,
+            color: `hsl(var(--chart-${Object.keys(projectTotals).length + 1}))`,
+            values: [],
+          };
+        }
+        projectTotals[project].values.push({
+          date: formatDate(timeRange, timestamp),
+          time: item.time_spent || 0,
+        });
+      }
+    }
+
+    const dates = Array.from(
+      new Set(
+        data.data.activities.map((slot: Activity[]) => formatDate(timeRange, slot[0]?.timestamp))
+      )
+    );
+
+    const chartData: ProjectChartDataPoint[] = dates.map((date) => {
+      const entry: ProjectChartDataPoint = { date };
+      for (const [project, { values }] of Object.entries(projectTotals)) {
+        const v = values.find((x) => x.date === date);
+        entry[project] = v ? v.time : 0;
+      }
+      return entry;
+    });
+
+    const chartConfig = Object.fromEntries(
+      Object.entries(projectTotals).map(([key, { label, color }]) => [key, { label, color }])
+    ) satisfies ChartConfig;
+
+    return {
+      chartData,
+      chartConfig,
+    };
+  }, [data, timeRange]);
 
   return {
-    chartConfig,
-    timeRanges,
+    timeRanges: DASHBOARD_CONSTANTS.TIME_RANGES,
     timeRange,
     onChangeTimeRange,
-    workActivity,
     isLoading,
+    projectActivity,
+    totalTimeStr: data?.data?.totalTimeStr || '',
+    workActivity,
   };
 };

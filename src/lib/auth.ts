@@ -1,7 +1,7 @@
+import type { NextRequest } from 'next/server';
+
 import { User } from './mongoose';
 import { ApiKeySchema, parseOrThrow, ValidationError } from './validation';
-
-import type { NextRequest } from 'next/server';
 
 // Function to extract API key from request headers
 export function extractApiKeyFromRequest(request: NextRequest): string | null {

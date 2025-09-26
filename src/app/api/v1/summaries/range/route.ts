@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import type { SummariesQuery } from '@/lib/validation';
-
 import { DAY, HOUR } from '@/config';
 import { Activity, createSuccessResponse, SummariesRangeResponse } from '@/lib/api/types';
 import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
 import { dbConnect, HourlyActivity } from '@/lib/mongoose';
 import { formatDuration } from '@/lib/utils/time';
+import type { SummariesQuery } from '@/lib/validation';
 import { parseOrThrow, SummariesQuerySchema } from '@/lib/validation';
 
 function aggregateActivities(activities: Activity[][]): Activity[][] {

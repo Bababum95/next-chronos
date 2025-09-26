@@ -1,7 +1,7 @@
 'use client';
 
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import type { FC, ReactNode } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -22,13 +22,12 @@ type Props = {
   chartData: any[];
 };
 
-export const ChartArea: FC<Props> = ({
-  title,
-  description,
+export const ChartLineMultiple: FC<Props> = ({
   chartConfig,
   chartData,
-  extra,
+  title,
   formatValue,
+  description,
 }) => {
   const configArray = Object.entries(chartConfig);
 
@@ -37,47 +36,31 @@ export const ChartArea: FC<Props> = ({
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
           <CardTitle>{title}</CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
+          <CardDescription>{description}</CardDescription>
         </div>
-        {extra}
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent>
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-          <AreaChart data={chartData}>
-            <defs>
-              {configArray.map(([key, config]) => (
-                <linearGradient
-                  id={`fill-${key}`}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                  key={`gradient-${key}`}
-                >
-                  <stop offset="5%" stopColor={config.color} stopOpacity={0.8} />
-                  <stop offset="95%" stopColor={config.color} stopOpacity={0.1} />
-                </linearGradient>
-              ))}
-            </defs>
+          <LineChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} />
             <ChartTooltip
-              cursor={false}
+              cursor={true}
               content={(props: CustomTooltipProps) => (
-                <ChartTooltipContent {...props} indicator="line" valueFormatter={formatValue} />
+                <ChartTooltipContent {...props} indicator="dot" valueFormatter={formatValue} />
               )}
             />
             {configArray.map(([key, config]) => (
-              <Area
-                key={`area-${key}`}
+              <Line
                 dataKey={key}
-                type="bump"
-                fill={`url(#fill-${key})`}
+                key={`line-${key}`}
+                type="monotone"
                 stroke={config.color}
-                stackId="a"
+                strokeWidth={2}
+                dot={false}
               />
             ))}
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>

@@ -2,7 +2,6 @@
 
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-
 import type { FC } from 'react';
 
 import {

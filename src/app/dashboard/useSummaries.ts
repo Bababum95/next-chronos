@@ -5,9 +5,18 @@ import { env } from '@/config';
 import { SummariesResponse } from '@/lib/api/types';
 import { formatDuration } from '@/lib/utils/time';
 
-export const useSummaries = () => {
+type UseSummariesReturn = {
+  totalTimeAllTime: string | null;
+  isLoading: boolean;
+  error?: string;
+};
+
+export const useSummaries = (): UseSummariesReturn => {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { data, isLoading, error } = useQuery<SummariesResponse>({
     queryKey: ['/api/v1/summaries'],
@@ -16,8 +25,10 @@ export const useSummaries = () => {
     refetchOnWindowFocus: false,
   });
 
+  const totalTimeAllTime = data?.data?.totalTime ? formatDuration(data.data.totalTime) : null;
+
   return {
-    totalTime: data?.data?.totalTime ? formatDuration(data.data.totalTime) : '0m',
+    totalTimeAllTime,
     isLoading: isLoading && mounted,
     error: error?.message,
   };

@@ -1,9 +1,9 @@
 import mongoose, { Model, Schema } from 'mongoose';
 
-import { Heartbeat } from './heartbeat';
-
 import { env, HOUR } from '@/config';
 import { calculateActiveTime, toHourEnd, toHourStart } from '@/lib/utils';
+
+import { Heartbeat } from './heartbeat';
 
 export type HourlyActivityDoc = {
   user: mongoose.Types.ObjectId;

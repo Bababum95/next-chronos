@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 
-import { useSignUp } from './useSignUp';
-
 import { AuthCard } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { TermsCheckbox } from '@/components/auth/TermsCheckbox';
 import { Button } from '@/components/ui/button';
+
+import { useSignUp } from './useSignUp';
 
 export default function SignUpPage() {
   const { formData, updateField, handleSubmit, state } = useSignUp();

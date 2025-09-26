@@ -2,11 +2,12 @@
 
 import { TrendingUp } from 'lucide-react';
 
-import { useChartData } from './useChartData';
-import { useSummaries } from './useSummaries';
-
 import { ChartArea } from '@/components/ChartArea';
+import { ChartLineMultiple } from '@/components/ChartLineMultiple';
 import { Header } from '@/components/Header';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatDuration } from '@/lib/utils/time';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -16,20 +17,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { formatDuration } from '@/lib/utils/time';
+
+import { useSummaries } from './useSummaries';
+import { useChartData } from './useChartData';
 
 export default function Dashboard() {
   const {
     timeRange,
     onChangeTimeRange,
     timeRanges,
-    chartConfig,
+    totalTimeStr,
     workActivity,
-    isLoading: timeRangeLoading,
+    isLoading: chartDataLoading,
+    projectActivity,
   } = useChartData();
-  const { totalTime, isLoading: summariesLoading } = useSummaries();
+  const { totalTimeAllTime, isLoading: summariesLoading } = useSummaries();
 
   const formatValue = (value: number | string) => {
     return formatDuration(value as number);
@@ -51,13 +53,13 @@ export default function Dashboard() {
           </Tabs>
         }
       />
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 grid gap-4">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3 mb-4">
           <Card>
             <CardHeader>
               <CardDescription>Total Time (All Time)</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {summariesLoading ? <Skeleton className="w-full h-8" /> : totalTime}
+                {summariesLoading ? <Skeleton className="w-full h-8" /> : totalTimeAllTime}
               </CardTitle>
               <CardAction>
                 <Badge variant="outline">
@@ -77,7 +79,7 @@ export default function Dashboard() {
             <CardHeader>
               <CardDescription>Total Time ({timeRange})</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {timeRangeLoading ? <Skeleton className="w-full h-8" /> : workActivity.totalTimeStr}
+                {chartDataLoading ? <Skeleton className="w-full h-8" /> : totalTimeStr}
               </CardTitle>
               <CardAction>
                 <Badge variant="outline">
@@ -98,7 +100,14 @@ export default function Dashboard() {
           title="Work Activity"
           description="Tracked time across selected period"
           chartData={workActivity.chartData}
-          chartConfig={chartConfig}
+          chartConfig={workActivity.chartConfig}
+          formatValue={formatValue}
+        />
+        <ChartLineMultiple
+          title="Project Activity"
+          description="Time spent per project"
+          chartConfig={projectActivity.chartConfig}
+          chartData={projectActivity.chartData}
           formatValue={formatValue}
         />
       </div>

@@ -1,9 +1,8 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { Toaster as Sonner } from 'sonner';
-
 import type { CSSProperties, FC } from 'react';
+import { Toaster as Sonner } from 'sonner';
 import type { ToasterProps } from 'sonner';
 
 export const Toaster: FC<ToasterProps> = (props) => {

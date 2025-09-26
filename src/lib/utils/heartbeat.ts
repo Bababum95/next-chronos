@@ -1,6 +1,5 @@
-import type { HeartbeatDoc } from '@/models/heartbeat';
-
 import { env } from '@/config';
+import type { HeartbeatDoc } from '@/models/heartbeat';
 
 /**
  * Calculate active time in seconds based on heartbeats within a time range.

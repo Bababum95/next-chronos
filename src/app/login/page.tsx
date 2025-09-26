@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 
-import { useLogin } from './useLogin';
-
 import { AuthCard } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+
+import { useLogin } from './useLogin';
 
 export default function LoginPage() {
   const { formData, updateField, handleSubmit, state } = useLogin();

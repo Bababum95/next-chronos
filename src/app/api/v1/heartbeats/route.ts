@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import type { HeartbeatsInput } from '@/lib/validation';
-
 import { CustomError, extractApiKeyFromRequest, validateApiKeyAndFindUser } from '@/lib/auth';
 import { dbConnect, Heartbeat, HourlyActivity } from '@/lib/mongoose';
+import type { HeartbeatsInput } from '@/lib/validation';
 import { HeartbeatsSchema, parseOrThrow } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
