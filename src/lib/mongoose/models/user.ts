@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import mongoose, { Schema, HydratedDocument } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 export type UserDoc = {

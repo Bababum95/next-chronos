@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { AuthCard } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
@@ -11,7 +12,7 @@ import { Label } from '@/components/ui/label';
 
 import { useLogin } from './useLogin';
 
-export default function LoginPage() {
+function LoginContent() {
   const { formData, updateField, handleSubmit, state } = useLogin();
 
   return (
@@ -64,5 +65,13 @@ export default function LoginPage() {
         </div>
       </div>
     </AuthCard>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }
