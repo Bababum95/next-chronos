@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, HydratedDocument } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 export type UserDoc = {
@@ -38,6 +38,7 @@ const UserSchema = new Schema<UserDoc, mongoose.Model<UserDoc>, UserMethods>(
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
+      select: false,
     },
     apiKey: {
       type: String,
@@ -72,12 +73,14 @@ UserSchema.methods.comparePassword = async function (candidatePassword: string):
 };
 
 // Static method to find user by API key
-UserSchema.statics.findByApiKey = function (apiKey: string) {
-  return this.findOne({ apiKey });
+UserSchema.statics.findByApiKey = async function (apiKey: string) {
+  const user = await this.findOne({ apiKey }).lean<UserDoc>().exec();
+  if (!user) return null;
+  return { ...user, _id: user._id.toString() };
 };
 
 export interface UserModel extends mongoose.Model<UserDoc, {}, UserMethods> {
-  findByApiKey: (apiKey: string) => Promise<(UserDoc & UserMethods) | null>;
+  findByApiKey: (apiKey: string) => Promise<UserDoc | null>;
 }
 
 export const User =

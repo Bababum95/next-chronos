@@ -5,7 +5,7 @@ import { env } from '@/config';
 export const tokenStorage = {
   /**
    * Save authentication token to cookies
-   * @param token - JWT token to save
+   * @param token - token to save
    * @param expirationDays - Number of days until token expires (default: 7)
    */
   setToken: (token: string, expirationDays = 7) => {
@@ -43,12 +43,21 @@ export const tokenStorage = {
 
 /**
  * Logout utility function
- * Removes token and redirects to login page
+ * Calls logout API and redirects to login page
  */
-export const logout = () => {
-  tokenStorage.removeToken();
-  // Redirect to login page
-  if (typeof window !== 'undefined') {
-    window.location.href = '/login';
+export const logout = async () => {
+  try {
+    // Call logout API to clear server-side cookies
+    await fetch('/api/v1/auth/logout', {
+      method: 'POST',
+    });
+  } catch (error) {
+    console.error('Logout API call failed:', error);
+  } finally {
+    // Always clear client-side token and redirect
+    tokenStorage.removeToken();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
   }
 };

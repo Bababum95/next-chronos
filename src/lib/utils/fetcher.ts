@@ -44,7 +44,6 @@ export const fetcher = async ({ queryKey }: { queryKey: readonly unknown[] }) =>
         toast.error(errorBody.message);
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
     throw new Error(errorMessage);

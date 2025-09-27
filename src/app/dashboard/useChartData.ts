@@ -134,7 +134,7 @@ export const useChartData = () => {
     onChangeTimeRange,
     isLoading,
     projectActivity,
-    totalTimeStr: data?.data?.totalTimeStr || '',
+    totalTimeStr: data?.data?.totalTimeStr,
     workActivity,
   };
 };

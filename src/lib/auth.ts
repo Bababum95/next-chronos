@@ -1,7 +1,11 @@
+import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 
-import { User } from './mongoose';
+import { env } from '@/config';
+
+import { dbConnect, User } from './mongoose';
 import { ApiKeySchema, parseOrThrow, ValidationError } from './validation';
+import { UserDoc } from './mongoose/models/user';
 
 // Function to extract API key from request headers
 export function extractApiKeyFromRequest(request: NextRequest): string | null {
@@ -18,8 +22,7 @@ export function extractApiKeyFromRequest(request: NextRequest): string | null {
 
     return apiKey || null;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error);
+    console.error(error);
 
     return null;
   }
@@ -62,5 +65,54 @@ export async function validateApiKeyAndFindUser(apiKey?: string | null) {
     throw new CustomError('NotFoundError', 'User not found with this API key', 404);
   }
 
+  return user;
+}
+
+/**
+ * Get token from server-side cookies
+ */
+export async function getServerToken(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get(env.tokenKey)?.value || null;
+}
+
+/**
+ * Validate token and get user data on the server side
+ */
+export async function validateServerToken(token?: string | null): Promise<UserDoc | null> {
+  if (!token) return null;
+
+  try {
+    await dbConnect();
+
+    parseOrThrow(ApiKeySchema, { apiKey: token });
+    const user = await User.findByApiKey(token);
+    if (!user) return null;
+
+    return user;
+  } catch (error) {
+    console.error('Token validation error:', error);
+    return null;
+  }
+}
+
+/**
+ * Get current authenticated user on the server side
+ * Returns null if not authenticated or token is invalid
+ */
+export async function getCurrentUser(): Promise<UserDoc | null> {
+  const token = await getServerToken();
+  return validateServerToken(token);
+}
+
+/**
+ * Require authentication - throws error if user is not authenticated
+ * Use this in server components and API routes that require auth
+ */
+export async function requireAuth(): Promise<UserDoc> {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error('Authentication required');
+  }
   return user;
 }

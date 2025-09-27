@@ -1,21 +1,8 @@
 import { HeartbeatDoc } from '@/lib/mongoose/models/heartbeat';
 import { ApiResponse, ValidationError } from '@/lib/validation';
+import type { UserDoc } from '@/lib/mongoose/models/user';
 
-// User types
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  apiKey: string;
-  isEmailVerified: boolean;
-  createdAt: string;
-  updatedAt?: string;
-};
-
-// Auth API types
-export type SignUpResponse = ApiResponse<User>;
-export type SignInResponse = ApiResponse<User>;
-
+export type UserResponse = ApiResponse<UserDoc>;
 export type HeartbeatsResponse = ApiResponse<{
   processed: number;
   heartbeats: HeartbeatDoc[];

@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(successResponse, { status: 201 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // eslint-disable-next-line no-console
     console.error('Signup error:', error);
 
     // Handle validation errors

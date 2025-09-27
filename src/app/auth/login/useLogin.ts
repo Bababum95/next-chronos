@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -27,6 +27,7 @@ const loginUser = createAuthenticatedMutation<SignInResponse, SignInInput>('/api
 
 export const useLogin = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<LoginFormData>(INITIAL_STATE);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -44,7 +45,10 @@ export const useLogin = () => {
         tokenStorage.setToken(response.data.apiKey, formData.remember ? 30 : 7);
 
         toast.success('Welcome back!');
-        router.push('/dashboard');
+
+        // Redirect to dashboard or the originally requested page
+        const redirectTo = searchParams.get('redirect') || '/dashboard';
+        router.push(redirectTo);
       } else {
         toast.error(response.message || 'Login failed');
       }

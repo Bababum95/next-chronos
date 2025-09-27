@@ -39,7 +39,6 @@ export async function POST(request: NextRequest) {
       count: body.heartbeats?.length,
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Error processing heartbeats:', error);
 
     if (error instanceof CustomError) {

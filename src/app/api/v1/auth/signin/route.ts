@@ -4,6 +4,11 @@ import { createSuccessResponse } from '@/lib/api/types';
 import { dbConnect, User } from '@/lib/mongoose';
 import { parseOrThrow, SignInInput, SignInSchema } from '@/lib/validation';
 
+const invalidError = NextResponse.json(
+  { success: false, message: 'Invalid email or password' },
+  { status: 401 }
+);
+
 export async function POST(request: NextRequest) {
   try {
     // Connect to database
@@ -14,28 +19,12 @@ export async function POST(request: NextRequest) {
     const validatedData: SignInInput = parseOrThrow(SignInSchema, body);
 
     // Find user by email
-    const user = await User.findOne({ email: validatedData.email });
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Invalid email or password',
-        },
-        { status: 401 }
-      );
-    }
+    const user = await User.findOne({ email: validatedData.email }).select('+password');
+    if (!user) return invalidError;
 
     // Check password
     const isPasswordValid = await user.comparePassword(validatedData.password);
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Invalid email or password',
-        },
-        { status: 401 }
-      );
-    }
+    if (!isPasswordValid) return invalidError;
 
     const userData = {
       id: user._id,
@@ -50,7 +39,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(successResponse, { status: 200 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // eslint-disable-next-line no-console
     console.error('Signin error:', error);
 
     // Handle validation errors
@@ -66,12 +54,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle other errors
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Internal server error',
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
