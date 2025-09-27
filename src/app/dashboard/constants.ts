@@ -13,6 +13,4 @@ export const DASHBOARD_CONSTANTS = {
     },
   },
   DEFAULT_TIME_RANGE: 'day' as const,
-  CHART_HEIGHT: 250,
-  SKELETON_HEIGHT: 8,
 } as const;

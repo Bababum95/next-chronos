@@ -27,6 +27,7 @@ const items = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -51,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser name="Andrew Stepanov" email="m@example.com" avatar="/avatars/shadcn.jpg" />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -3,6 +3,7 @@
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import type { FC } from 'react';
+import Link from 'next/link';
 
 import {
   DropdownMenu,
@@ -19,13 +20,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { User, UserProps } from '@/components/User';
+import { User } from '@/components/User';
+import { useUser } from '@/lib/hooks/useUser';
 
 const VARIANTS = ['light', 'dark', 'system'];
 
-export const NavUser: FC<UserProps> = ({ name, email, avatar }) => {
+export const NavUser: FC = () => {
   const { isMobile } = useSidebar();
   const { setTheme } = useTheme();
+  const { user, logout } = useUser();
 
   return (
     <SidebarMenu>
@@ -36,7 +39,7 @@ export const NavUser: FC<UserProps> = ({ name, email, avatar }) => {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <User name={name} email={email} avatar={avatar} />
+              <User name={user?.name} email={user?.email} />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -48,7 +51,7 @@ export const NavUser: FC<UserProps> = ({ name, email, avatar }) => {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <User name={name} email={email} avatar={avatar} />
+                <User name={user?.name} email={user?.email} />
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -72,10 +75,12 @@ export const NavUser: FC<UserProps> = ({ name, email, avatar }) => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
+              <Link href="/dashboard/account">
+                <DropdownMenuItem>
+                  <BadgeCheck />
+                  Account
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>
                 <CreditCard />
                 Billing
@@ -86,7 +91,7 @@ export const NavUser: FC<UserProps> = ({ name, email, avatar }) => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

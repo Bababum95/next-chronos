@@ -1,7 +1,8 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import { tokenStorage } from '@/lib/utils/auth';
 import { fetcher } from '@/lib/utils/fetcher';
@@ -16,15 +17,7 @@ type UserContextType = {
   refreshUser: () => Promise<void>;
 };
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export function useUser() {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-}
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 type UserProviderProps = {
   children: React.ReactNode;
@@ -33,6 +26,7 @@ type UserProviderProps = {
 
 export function UserProvider({ children, initialUser }: UserProviderProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { data, isLoading, refetch } = useQuery<UserDoc | null>({
     queryKey: ['currentUser'],
     enabled: !!tokenStorage.isAuthenticated(),
@@ -55,7 +49,7 @@ export function UserProvider({ children, initialUser }: UserProviderProps) {
   const logout = () => {
     queryClient.setQueryData(['currentUser'], null);
     tokenStorage.removeToken();
-    window.location.href = '/login';
+    router.push('/auth/login');
   };
 
   const refreshUser = async () => {
