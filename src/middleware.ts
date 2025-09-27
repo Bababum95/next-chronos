@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { env, PROTECTED_ROUTES, AUTH_ROUTES } from '@/config';
+import { ApiKeySchema } from '@/lib/validation';
 
 /**
  * Check if the current path matches any of the given patterns
@@ -21,22 +22,12 @@ function getTokenFromCookies(request: NextRequest): string | null {
   return request.cookies.get(env.tokenKey)?.value || null;
 }
 
-/**
- * Validate token by making a request to the API
- */
-async function validateToken(token: string, request: NextRequest): Promise<boolean> {
-  try {
-    const response = await fetch(`${request.nextUrl.origin}/api/v1/users/me`, {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${token}:`).toString('base64')}`,
-      },
-    });
+function validateToken(token: string | null): boolean {
+  if (!token) return false;
 
-    return response.ok;
-  } catch (error) {
-    console.error('Token validation error:', error);
-    return false;
-  }
+  const result = ApiKeySchema.safeParse({ apiKey: token });
+
+  return result.success;
 }
 
 export async function middleware(request: NextRequest) {
@@ -55,15 +46,8 @@ export async function middleware(request: NextRequest) {
 
   // Check if user is on a protected route
   if (matchesPattern(pathname, PROTECTED_ROUTES)) {
-    if (!token) {
-      // No token, redirect to login
-      const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
     // Validate token
-    const isValid = await validateToken(token, request);
+    const isValid = validateToken(token);
     if (!isValid) {
       // Invalid token, clear cookies and redirect to login
       const loginUrl = new URL('/auth/login', request.url);
@@ -77,23 +61,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if user is on an auth route (login, signup, etc.)
-  if (matchesPattern(pathname, AUTH_ROUTES)) {
-    if (token) {
-      // User has token, validate it
-      const isValid = await validateToken(token, request);
-      if (isValid) {
-        // Valid token, redirect to dashboard
-        const dashboardUrl = new URL('/dashboard', request.url);
-        return NextResponse.redirect(dashboardUrl);
-      } else {
-        // Invalid token, clear it and allow access to auth page
-        const response = NextResponse.next();
-        response.cookies.delete(env.tokenKey);
-        return response;
-      }
+  if (matchesPattern(pathname, AUTH_ROUTES) && token) {
+    // User has token, validate it
+    const isValid = validateToken(token);
+    if (isValid) {
+      // Valid token, redirect to dashboard
+      const dashboardUrl = new URL('/dashboard', request.url);
+      return NextResponse.redirect(dashboardUrl);
+    } else {
+      // Invalid token, clear it and allow access to auth page
+      const response = NextResponse.next();
+      response.cookies.delete(env.tokenKey);
+      return response;
     }
-    // No token, allow access to auth pages
-    return NextResponse.next();
   }
 
   // For all other routes (public routes), allow access
