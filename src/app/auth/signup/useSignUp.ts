@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { SignUpResponse } from '@/lib/api/types';
+import { UserResponse } from '@/lib/api/types';
 import { tokenStorage } from '@/lib/utils/auth';
 import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import {
@@ -35,7 +35,7 @@ const INITIAL_STATE = {
 };
 
 // Sign up mutation function
-const signUpUser = createAuthenticatedMutation<SignUpResponse, SignUpInput>('/api/v1/auth/signup');
+const signUpUser = createAuthenticatedMutation<UserResponse, SignUpInput>('/api/v1/auth/signup');
 
 export const useSignUp = () => {
   const router = useRouter();
@@ -57,7 +57,7 @@ export const useSignUp = () => {
 
   const signUpMutation = useMutation({
     mutationFn: signUpUser,
-    onSuccess: (response: SignUpResponse) => {
+    onSuccess: (response: UserResponse) => {
       if (response.success && response.data?.apiKey) {
         // Save token to cookies and redirect to dashboard
         tokenStorage.setToken(response.data.apiKey, 7);

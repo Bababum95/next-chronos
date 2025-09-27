@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { SignInResponse } from '@/lib/api/types';
+import { UserResponse } from '@/lib/api/types';
 import { tokenStorage } from '@/lib/utils/auth';
 import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import { FieldError, SignInInput, validateEmail, validatePassword } from '@/lib/validation';
@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 };
 
 // Login mutation function
-const loginUser = createAuthenticatedMutation<SignInResponse, SignInInput>('/api/v1/auth/signin');
+const loginUser = createAuthenticatedMutation<UserResponse, SignInInput>('/api/v1/auth/signin');
 
 export const useLogin = () => {
   const router = useRouter();
@@ -39,12 +39,10 @@ export const useLogin = () => {
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (response: SignInResponse) => {
+    onSuccess: (response: UserResponse) => {
       if (response.success && response.data?.apiKey) {
         // Save token to cookies
         tokenStorage.setToken(response.data.apiKey, formData.remember ? 30 : 7);
-
-        toast.success('Welcome back!');
 
         // Redirect to dashboard or the originally requested page
         const redirectTo = searchParams.get('redirect') || '/dashboard';

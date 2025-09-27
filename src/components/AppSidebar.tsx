@@ -22,7 +22,7 @@ import {
 // Menu items.
 const items = [
   { title: 'Dashboard', url: '/dashboard', icon: Gauge },
-  { title: 'Projects', url: '#', icon: Folder },
+  { title: 'Projects', url: '/dashboard/projects', icon: Folder },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
