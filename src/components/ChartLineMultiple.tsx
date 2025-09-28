@@ -54,7 +54,7 @@ export const ChartLineMultiple: FC<Props> = ({
               <Line
                 dataKey={key}
                 key={`line-${key}`}
-                type="monotone"
+                type="bump"
                 stroke={config.color}
                 strokeWidth={2}
                 dot={false}

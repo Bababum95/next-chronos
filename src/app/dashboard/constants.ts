@@ -1,7 +1,7 @@
 export const DASHBOARD_CONSTANTS = {
   TIME_RANGES: [
     { value: 'day', label: 'Today' },
-    { value: 'week', label: 'Week' },
+    { value: 'isoWeek', label: 'Week' },
     { value: 'month', label: 'Month' },
   ] as const,
   CHART_CONFIG: {

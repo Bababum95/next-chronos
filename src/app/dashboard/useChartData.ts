@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -14,6 +15,8 @@ import type {
   TimeRange,
   WorkActivityData,
 } from './types';
+
+dayjs.extend(isoWeek);
 
 const isTimeRange = (value: string): value is TimeRange => {
   return DASHBOARD_CONSTANTS.TIME_RANGES.some((range) => range.value === value);
