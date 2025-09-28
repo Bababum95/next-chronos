@@ -1,9 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import type { FC } from 'react';
-import Link from 'next/link';
 
 import {
   DropdownMenu,
@@ -27,7 +27,7 @@ const VARIANTS = ['light', 'dark', 'system'];
 
 export const NavUser: FC = () => {
   const { isMobile } = useSidebar();
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const { user, logout } = useUser();
 
   return (
@@ -65,9 +65,13 @@ export const NavUser: FC = () => {
                   </DropdownMenuItem>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {VARIANTS.map((theme) => (
-                    <DropdownMenuItem key={theme} onClick={() => setTheme(theme)}>
-                      {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  {VARIANTS.map((variant) => (
+                    <DropdownMenuItem
+                      key={variant}
+                      onClick={() => setTheme(variant)}
+                      isActive={variant === theme}
+                    >
+                      {variant.charAt(0).toUpperCase() + variant.slice(1)}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
