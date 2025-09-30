@@ -9,6 +9,7 @@ export type UserDoc = {
   password: string;
   apiKey: string;
   isEmailVerified: boolean;
+  avatarUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -49,6 +50,10 @@ const UserSchema = new Schema<UserDoc, mongoose.Model<UserDoc>, UserMethods>(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    avatarUrl: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }

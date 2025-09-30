@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { AuthCard } from '@/components/auth/AuthCard';
-import { FormField } from '@/components/auth/FormField';
+import { FormField } from '@/components/forms/FormField';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

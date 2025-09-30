@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { AuthCard } from '@/components/auth/AuthCard';
-import { FormField } from '@/components/auth/FormField';
+import { FormField } from '@/components/forms/FormField';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { TermsCheckbox } from '@/components/auth/TermsCheckbox';
 import { Button } from '@/components/ui/button';
