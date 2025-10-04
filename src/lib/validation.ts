@@ -112,12 +112,27 @@ export const UpdateProfileSchema = z
     message: 'At least one field must be provided',
   });
 
+export const ChangePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z
+      .string()
+      .min(6, 'Password must be at least 6 characters long')
+      .max(100, 'Password cannot exceed 100 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
 export type HeartbeatsInput = z.infer<typeof HeartbeatsSchema>;
 export type SummariesQuery = z.infer<typeof SummariesQuerySchema>;
 export type SignUpInput = z.infer<typeof SignUpSchema>;
 export type SignInInput = z.infer<typeof SignInSchema>;
 export type ApiKeyInput = z.infer<typeof ApiKeySchema>;
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
+export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>;
 
 export function parseOrThrow<T>(schema: z.ZodTypeAny, data: unknown): T {
   const result = schema.safeParse(data);
@@ -185,6 +200,20 @@ export function validatePasswordMatch(
 
 export function validateTerms(terms: boolean): FieldError | null {
   if (!terms) return { field: 'terms', message: 'You must agree to the terms and conditions' };
+  return null;
+}
+
+export function validateCurrentPassword(password: string): FieldError | null {
+  if (!password) return { field: 'currentPassword', message: 'Current password is required' };
+  return null;
+}
+
+export function validateNewPassword(password: string): FieldError | null {
+  if (!password) return { field: 'newPassword', message: 'New password is required' };
+  if (password.length < 6)
+    return { field: 'newPassword', message: 'Password must be at least 6 characters long' };
+  if (password.length > 100)
+    return { field: 'newPassword', message: 'Password cannot exceed 100 characters' };
   return null;
 }
 

@@ -13,26 +13,16 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { FormField } from '@/components/forms/FormField';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { getInitials } from '@/lib/utils';
 import { useEditProfileForm } from '@/features/account/hooks/useEditProfileForm';
 import { useAvatarUpload } from '@/features/account/hooks/useAvatarUpload';
+import { UserAvatar } from '@/entities/user/components/UserAvatar';
 
 export function EditProfileDialog() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    name,
-    email,
-    avatarUrl,
-    isLoading,
-    error,
-    fieldErrors,
-    updateField,
-    submitForm,
-    resetForm,
-  } = useEditProfileForm();
+  const { name, email, avatarUrl, isLoading, fieldErrors, updateField, submitForm, resetForm } =
+    useEditProfileForm();
 
   const { isUploading, uploadAvatar, deleteAvatar } = useAvatarUpload();
 
@@ -80,12 +70,7 @@ export function EditProfileDialog() {
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4">
             <div className="relative flex flex-col items-center gap-2">
-              <Avatar className="h-24 w-24 rounded-lg bg-muted">
-                <AvatarImage src={avatarUrl} alt={name} />
-                <AvatarFallback className="rounded-lg text-4xl font-bold">
-                  {getInitials(name)}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar url={avatarUrl} name={name} size={32} />
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -122,12 +107,6 @@ export function EditProfileDialog() {
                 className="hidden"
               />
             </div>
-
-            {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-                {error}
-              </div>
-            )}
 
             <FormField
               id="name"

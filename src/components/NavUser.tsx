@@ -20,7 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { User } from '@/components/User';
+import { User } from '@/entities/user';
 import { useUser } from '@/lib/hooks/useUser';
 
 const VARIANTS = ['light', 'dark', 'system'];

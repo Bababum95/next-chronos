@@ -5,10 +5,30 @@
 
 module.exports = {
   darkMode: ['class'],
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  safelist: [
+    'h-4',
+    'w-4',
+    'h-6',
+    'w-6',
+    'h-8',
+    'w-8',
+    'h-12',
+    'w-12',
+    'h-16',
+    'w-16',
+    'h-20',
+    'w-20',
+    'h-24',
+    'w-24',
+    'h-28',
+    'w-28',
+    'h-32',
+    'w-32',
+    'h-36',
+    'w-36',
+    'h-40',
+    'w-40',
   ],
   theme: {
     extend: {
