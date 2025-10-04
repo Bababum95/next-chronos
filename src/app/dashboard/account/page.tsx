@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/lib/hooks/useUser';
 import { EditProfileDialog, ChangePasswordDialog } from '@/features/account';
 import { UserAvatar } from '@/entities/user';
+import { TooltipLite } from '@/components/ui/tooltip';
 
 export default function Account() {
   const { user } = useUser();
@@ -42,9 +43,11 @@ export default function Account() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Telegram: </span>
-              <Button variant="ghost" size="sm">
-                <CirclePlus />
-              </Button>
+              <TooltipLite content="Coming soon">
+                <Button variant="ghost" size="sm">
+                  <CirclePlus />
+                </Button>
+              </TooltipLite>
             </div>
           </CardContent>
         </Card>
