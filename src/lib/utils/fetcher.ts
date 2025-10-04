@@ -14,7 +14,7 @@ export const authenticatedFetch = async (
   const headers = new Headers(options.headers);
 
   // Add Content-Type if not already set
-  if (!headers.has('Content-Type')) {
+  if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
 

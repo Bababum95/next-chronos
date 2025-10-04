@@ -98,11 +98,26 @@ export const ApiKeySchema = z.object({
     ),
 });
 
+export const UpdateProfileSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'Name must be at least 2 characters long')
+      .max(50, 'Name cannot exceed 50 characters')
+      .trim()
+      .optional(),
+    email: z.email('Please enter a valid email address').toLowerCase().trim().optional(),
+  })
+  .refine((data) => data.name || data.email, {
+    message: 'At least one field must be provided',
+  });
+
 export type HeartbeatsInput = z.infer<typeof HeartbeatsSchema>;
 export type SummariesQuery = z.infer<typeof SummariesQuerySchema>;
 export type SignUpInput = z.infer<typeof SignUpSchema>;
 export type SignInInput = z.infer<typeof SignInSchema>;
 export type ApiKeyInput = z.infer<typeof ApiKeySchema>;
+export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
 
 export function parseOrThrow<T>(schema: z.ZodTypeAny, data: unknown): T {
   const result = schema.safeParse(data);
