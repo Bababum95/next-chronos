@@ -3,6 +3,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { VariantProps, cva } from 'class-variance-authority';
 import { Menu, PanelLeft } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import {
   createContext,
   forwardRef,
@@ -78,6 +79,11 @@ const SidebarProvider = forwardRef<
   ) => {
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = useState(false);
+    const pathname = usePathname();
+
+    useEffect(() => {
+      if (isMobile) setOpenMobile(false);
+    }, [pathname, isMobile]);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
