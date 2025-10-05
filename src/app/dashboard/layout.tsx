@@ -8,6 +8,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   // Get user data - this will redirect if not authenticated due to middleware
+  console.log('dashboard layout');
   const user = await getCurrentUser();
 
   // This is a safety check in case middleware didn't catch it

@@ -3,8 +3,11 @@ import { z } from 'zod';
 if (typeof window === 'undefined') {
   const envSchema = z.object({
     MONGODB_URI: z.string({ message: 'MONGODB_URI is required' }),
+    GOOGLE_CLIENT_ID: z.string({ message: 'GOOGLE_CLIENT_ID is required' }),
+    GOOGLE_CLIENT_SECRET: z.string({ message: 'GOOGLE_CLIENT_SECRET is required' }),
     NEXT_PUBLIC_INTERVAL_SEC: z.string({ message: 'NEXT_PUBLIC_INTERVAL_SEC is required' }),
     NEXT_PUBLIC_TOKEN_KEY: z.string().default('auth-token'),
+    NEXTAUTH_SECRET: z.string({ message: 'NEXTAUTH_SECRET is required' }),
   });
 
   const parsedEnv = envSchema.safeParse(process.env);
@@ -17,6 +20,9 @@ if (typeof window === 'undefined') {
 
 export const env = {
   mongoUri: process.env.MONGODB_URI as string,
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  nextauthSecret: process.env.NEXTAUTH_SECRET || '',
   intervalSec: Number(process.env.NEXT_PUBLIC_INTERVAL_SEC),
   tokenKey: process.env.NEXT_PUBLIC_TOKEN_KEY || 'auth-token',
 };

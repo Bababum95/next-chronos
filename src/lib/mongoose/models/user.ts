@@ -6,10 +6,11 @@ export type UserDoc = {
   _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   apiKey: string;
   isEmailVerified: boolean;
   avatarUrl?: string;
+  gallery?: string[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -55,13 +56,17 @@ const UserSchema = new Schema<UserDoc, mongoose.Model<UserDoc>, UserMethods>(
       type: String,
       default: null,
     },
+    gallery: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );
 
 // Hash password before saving
 UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
 
   try {
     const salt = await bcrypt.genSalt(12);
@@ -74,6 +79,7 @@ UserSchema.pre('save', async function (next) {
 
 // Compare password method
 UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 

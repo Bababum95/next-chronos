@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 import { env, PROTECTED_ROUTES, AUTH_ROUTES } from '@/config';
 import { ApiKeySchema } from '@/lib/validation';
@@ -32,7 +33,6 @@ function validateToken(token: string | null): boolean {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = getTokenFromCookies(request);
 
   // Skip middleware for API routes, static files, and public assets
   if (
@@ -42,6 +42,17 @@ export async function middleware(request: NextRequest) {
     pathname.includes('.')
   ) {
     return NextResponse.next();
+  }
+
+  let token = getTokenFromCookies(request);
+  let setCookie = false;
+
+  if (!token) {
+    const session = await getToken({ req: request, secret: env.nextauthSecret });
+    if (session?.apiKey) {
+      token = session.apiKey;
+      setCookie = true;
+    }
   }
 
   // Check if user is on a protected route
@@ -56,8 +67,18 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    // Valid token, allow access
-    return NextResponse.next();
+    const response = NextResponse.next();
+
+    if (setCookie && token) {
+      response.cookies.set(env.tokenKey, token, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 дней
+      });
+    }
+
+    return response;
   }
 
   // Check if user is on an auth route (login, signup, etc.)
@@ -67,7 +88,16 @@ export async function middleware(request: NextRequest) {
     if (isValid) {
       // Valid token, redirect to dashboard
       const dashboardUrl = new URL('/dashboard', request.url);
-      return NextResponse.redirect(dashboardUrl);
+      const redirect = NextResponse.redirect(dashboardUrl);
+      if (setCookie && token) {
+        redirect.cookies.set(env.tokenKey, token, {
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 30, // 30 дней
+        });
+      }
+      return redirect;
     } else {
       // Invalid token, clear it and allow access to auth page
       const response = NextResponse.next();

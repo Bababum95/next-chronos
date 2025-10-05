@@ -1,4 +1,6 @@
+import GoogleProvider from 'next-auth/providers/google';
 import { cookies } from 'next/headers';
+import { NextAuthOptions } from 'next-auth';
 import type { NextRequest } from 'next/server';
 
 import { env } from '@/config';
@@ -6,6 +8,63 @@ import { env } from '@/config';
 import { dbConnect, User } from './mongoose';
 import { ApiKeySchema, parseOrThrow, ValidationError } from './validation';
 import { UserDoc } from './mongoose/models/user';
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: env.googleClientId,
+      clientSecret: env.googleClientSecret,
+    }),
+  ],
+  pages: {
+    signIn: '/auth/login',
+  },
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        try {
+          await dbConnect();
+
+          let existingUser = await User.findOne({ email: user.email });
+
+          if (!existingUser) {
+            existingUser = new User({
+              name: user.name,
+              email: user.email,
+              avatarUrl: user.image,
+              gallery: user.image ? [user.image] : [],
+              isEmailVerified: true,
+            });
+            await existingUser.save();
+          } else if (!existingUser.isEmailVerified) {
+            existingUser.isEmailVerified = true;
+            if (user.image) {
+              if (!existingUser.gallery) existingUser.gallery = [];
+              existingUser.gallery.push(user.image);
+            }
+            await existingUser.save();
+          }
+
+          return true;
+        } catch (error) {
+          console.error('Error during Google sign in:', error);
+          return false;
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user?.email) {
+        await dbConnect();
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser?.apiKey) {
+          token.apiKey = dbUser.apiKey;
+        }
+      }
+      return token;
+    },
+  },
+};
 
 // Function to extract API key from request headers
 export function extractApiKeyFromRequest(request: NextRequest): string | null {

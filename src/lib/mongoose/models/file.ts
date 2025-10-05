@@ -7,6 +7,7 @@ export type FileDoc = {
   mimeType: string;
   size: number;
   data: Buffer;
+  purpose: 'avatar';
   createdAt: Date;
   updatedAt: Date;
 };
@@ -33,6 +34,12 @@ const FileSchema = new Schema<FileDoc>(
     },
     data: {
       type: Buffer,
+      required: true,
+    },
+    purpose: {
+      type: String,
+      enum: ['avatar'],
+      default: 'avatar',
       required: true,
     },
   },

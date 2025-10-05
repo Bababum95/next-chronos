@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
       mimeType: file.type,
       size: file.size,
       data: buffer,
+      purpose: 'avatar',
     });
 
     await fileRecord.save();
@@ -53,6 +54,7 @@ export async function POST(request: NextRequest) {
     const avatarUrl = `/api/v1/files/${fileRecord._id}`;
     await User.findByIdAndUpdate(user._id, {
       avatarUrl,
+      gallery: [...(user.gallery || []), avatarUrl],
     });
 
     return NextResponse.json({

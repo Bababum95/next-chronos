@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { SessionProvider } from '@/components/providers/SessionProvider';
 import { QueryProvider } from '@/lib/query-client';
 
 import './globals.css';
@@ -50,12 +51,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <QueryProvider>
-            <div className="flex min-h-screen flex-col">
-              <main className="flex-1">{children}</main>
-              <Toaster />
-            </div>
-          </QueryProvider>
+          <SessionProvider>
+            <QueryProvider>
+              <div className="flex min-h-screen flex-col">
+                <main className="flex-1">{children}</main>
+                <Toaster />
+              </div>
+            </QueryProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

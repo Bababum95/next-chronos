@@ -3,14 +3,11 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { AuthCard } from '@/components/auth/AuthCard';
+import { AuthCard, SocialAuthButtons, useLogin } from '@/features/auth';
 import { FormField } from '@/components/forms/FormField';
-import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-
-import { useLogin } from './useLogin';
 
 function LoginContent() {
   const { formData, updateField, handleSubmit, state } = useLogin();
@@ -55,7 +52,7 @@ function LoginContent() {
           Sign in
         </Button>
 
-        <SocialAuthButtons />
+        <SocialAuthButtons type="login" />
 
         <div className="text-center text-sm">
           Don&apos;t have an account?{' '}
