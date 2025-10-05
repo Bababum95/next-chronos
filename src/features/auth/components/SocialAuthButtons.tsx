@@ -8,6 +8,7 @@ type Props = {
   type: 'login' | 'signup';
 };
 
+// TODO(@bababum): Review and enable Apple and GitHub OAuth when providers are configured in NextAuth.
 export const SocialAuthButtons: FC<Props> = ({ type }) => (
   <>
     <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">

@@ -70,6 +70,7 @@ export function EditProfileDialog() {
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4">
             <div className="relative flex flex-col items-center gap-2">
+              {/* TODO(@bababum): Refactor avatar change to allow selecting from user's gallery in addition to file upload. */}
               <UserAvatar url={avatarUrl} name={name} size={32} />
               <div className="flex gap-2">
                 <Button
