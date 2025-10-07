@@ -4,13 +4,29 @@ import { env, HOUR } from '@/config';
 import { calculateActiveTime, toHourEnd, toHourStart } from '@/lib/utils';
 
 import { Heartbeat } from './heartbeat';
+import { Project } from './project';
 
+// TODO: Remove alternate_project, project_folder
 export type HourlyActivityDoc = {
   user: mongoose.Types.ObjectId;
   timestamp: number; // unix, начало часа
   composite_key: string;
+  /**
+   * Will be removed in the next release.
+   * Use `project: mongoose.Types.ObjectId` (ref to Project) instead.
+   *
+   * @deprecated
+   * */
   alternate_project?: string;
+  /**
+   * Will be removed in the next release.
+   * Use `project: mongoose.Types.ObjectId` (ref to Project) instead.
+   *
+   * @deprecated
+   * */
   project_folder?: string;
+  project?: mongoose.Types.ObjectId;
+  root_project?: mongoose.Types.ObjectId;
   git_branch?: string;
   language?: string;
   category?: 'debugging' | 'ai coding' | 'building' | 'code reviewing';
@@ -60,6 +76,10 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
   // Compute startHour and endHour
   const startTimestamp = toHourStart(start);
   const endTimestamp = toHourEnd(end);
+  const projectCache = new Map<
+    string,
+    { _id: mongoose.Types.ObjectId; parent?: mongoose.Types.ObjectId; git_branches?: string[] }
+  >();
 
   // Fetch heartbeats for the user in the time range
   const heartbeats = await Heartbeat.find({
@@ -70,12 +90,51 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
   // Group by category, language, project_folder, alternate_project, git_branch, hour (UTC), date (UTC)
   const groups = new Map();
   for (const hb of heartbeats) {
+    if (!hb.project_folder) continue;
+    if (!projectCache.has(hb.project_folder)) {
+      let project = await Project.findByPath(userId, hb.project_folder)
+        .select('_id parent git_branches')
+        .lean<{
+          _id: mongoose.Types.ObjectId;
+          parent?: mongoose.Types.ObjectId;
+          git_branches: string[];
+        }>();
+
+      if (!project) {
+        const newProject = await Project.create({
+          name: hb.alternate_project || hb.project_folder || 'unknown',
+          user: userId,
+          project_folder: hb.project_folder,
+          alternate_project: hb.alternate_project,
+          git_branches: hb.git_branch ? [hb.git_branch] : [],
+        });
+
+        project = {
+          _id: newProject._id,
+          parent: newProject.parent,
+          git_branches: newProject.git_branches,
+        };
+      }
+
+      projectCache.set(hb.project_folder, project);
+    }
+
+    const project = projectCache.get(hb.project_folder);
+    if (!project) continue;
+
+    if (hb.git_branch) {
+      project.git_branches = Array.from(new Set([...(project.git_branches || []), hb.git_branch]));
+    }
+
+    // TODO: Remove alternate_project, project_folder
+    // and change JSON.stringify to join('|')
     const key = JSON.stringify({
       category: hb.category || null,
       language: hb.language || null,
       project_folder: hb.project_folder || null,
       alternate_project: hb.alternate_project || null,
       git_branch: hb.git_branch || null,
+      project: project?._id || null,
       timestamp: toHourStart(hb.time),
     });
 
@@ -89,6 +148,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
     if (!first) continue;
 
     let activeTime = calculateActiveTime(hb, startTimestamp, endTimestamp);
+    const project = projectCache.get(first.project_folder);
 
     // If active time in the hour is within one interval of a full hour,
     // round it up to a full productive hour (3600 seconds).
@@ -105,11 +165,30 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
           project_folder: first.project_folder,
           alternate_project: first.alternate_project,
           git_branch: first.git_branch,
+          project: project?._id,
+          root_project: project?.parent,
           timestamp: toHourStart(first.time),
         },
       },
       { upsert: true, new: true }
     );
+  }
+
+  const bulkOps: any[] = [];
+
+  for (const [_path, project] of projectCache.entries()) {
+    if (!project?._id || !project.git_branches?.length) continue;
+
+    bulkOps.push({
+      updateOne: {
+        filter: { _id: project._id },
+        update: { $set: { git_branches: project.git_branches } },
+      },
+    });
+  }
+
+  if (bulkOps.length > 0) {
+    await Project.bulkWrite(bulkOps);
   }
 };
 
