@@ -166,7 +166,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
           alternate_project: first.alternate_project,
           git_branch: first.git_branch,
           project: project?._id,
-          root_project: project?.parent,
+          root_project: project?.parent ?? project?._id,
           timestamp: toHourStart(first.time),
         },
       },
