@@ -34,7 +34,7 @@ ProjectSchema.index({ user: 1 });
 ProjectSchema.index({ project_folder: 1 });
 ProjectSchema.index({ parent: 1 });
 ProjectSchema.index({ name: 1 });
-ProjectSchema.index({ user: 1, project_folder: 1 }, { unique: true });
+ProjectSchema.index({ user: 1, project_folder: 1 });
 
 ProjectSchema.statics.findByPath = function (userId: mongoose.Types.ObjectId, path: string) {
   const parts = path
