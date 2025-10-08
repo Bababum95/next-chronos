@@ -92,9 +92,8 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
   // Group by category, language, project_folder, alternate_project, git_branch, hour (UTC), date (UTC)
   const groups = new Map();
   for (const hb of heartbeats) {
-    if (!hb.project_folder) continue;
     if (!projectCache.has(hb.project_folder)) {
-      let project = await Project.findOne({ user: userId, project_path: hb.project_folder })
+      let project = await Project.findOne({ user: userId, project_folder: hb.project_folder })
         .select('_id parent git_branches')
         .lean<{
           _id: mongoose.Types.ObjectId;
