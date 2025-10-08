@@ -92,7 +92,7 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
   for (const hb of heartbeats) {
     if (!hb.project_folder) continue;
     if (!projectCache.has(hb.project_folder)) {
-      let project = await Project.findByPath(userId, hb.project_folder)
+      let project = await Project.findOne({ user: userId, project_path: hb.project_folder })
         .select('_id parent git_branches')
         .lean<{
           _id: mongoose.Types.ObjectId;
@@ -101,12 +101,10 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
         }>();
 
       if (!project) {
-        const project_folder = hb.project_folder?.split('/');
-        console.log(project_folder);
         const newProject = await Project.create({
           name: hb.alternate_project || hb.project_folder || 'unknown',
           user: userId,
-          project_folder,
+          project_folder: hb.project_folder,
           alternate_project: hb.alternate_project,
           git_branches: hb.git_branch ? [hb.git_branch] : [],
         });
