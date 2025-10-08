@@ -50,6 +50,8 @@ const HourlyActivitySchema = new Schema<HourlyActivityDoc>(
     timestamp: { type: Number, required: true },
     alternate_project: { type: String },
     project_folder: { type: String },
+    project: { type: Schema.Types.ObjectId, ref: 'Project' },
+    root_project: { type: Schema.Types.ObjectId, ref: 'Project' },
     git_branch: { type: String },
     language: { type: String },
     category: {
