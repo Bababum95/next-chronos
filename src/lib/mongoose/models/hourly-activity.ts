@@ -101,10 +101,12 @@ HourlyActivitySchema.statics.updateFromHeartbeats = async function (
         }>();
 
       if (!project) {
+        const project_folder = hb.project_folder?.split('/');
+        console.log(project_folder);
         const newProject = await Project.create({
           name: hb.alternate_project || hb.project_folder || 'unknown',
           user: userId,
-          project_folder: hb.project_folder?.split('/'),
+          project_folder,
           alternate_project: hb.alternate_project,
           git_branches: hb.git_branch ? [hb.git_branch] : [],
         });
