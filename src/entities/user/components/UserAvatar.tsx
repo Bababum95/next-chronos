@@ -13,7 +13,9 @@ export const UserAvatar: FC<Props> = ({ url, name, size = 24 }) => {
   return (
     <Avatar className={cn(`h-${size} w-${size} rounded-lg bg-muted`)}>
       <AvatarImage src={url} alt={name} />
-      <AvatarFallback className="rounded-lg text-4xl font-bold">{getInitials(name)}</AvatarFallback>
+      <AvatarFallback className="rounded-lg font-bold" style={{ fontSize: size * 2 }}>
+        {getInitials(name)}
+      </AvatarFallback>
     </Avatar>
   );
 };
