@@ -89,7 +89,8 @@ export const useChartData = () => {
       const timestamp = slot[0]?.timestamp;
 
       for (const item of slot) {
-        const project = item.alternate_project || item.project_folder || 'unknown';
+        const project = item.root_project?.name || 'unknown';
+
         if (!projectTotals[project]) {
           if (item.time_spent === 0) continue;
           projectTotals[project] = {

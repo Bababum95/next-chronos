@@ -93,7 +93,7 @@ export const useActivityAnalytics = () => {
     for (const slot of data.data.activities) {
       for (const item of slot) {
         if (item.time_spent === 0) continue;
-        const project = item.alternate_project || item.project_folder || 'unknown';
+        const project = item.root_project?.name || 'unknown';
         if (!projectTotals[project]) {
           projectTotals[project] = {
             label: project,
@@ -105,12 +105,17 @@ export const useActivityAnalytics = () => {
       }
     }
 
-    // Convert to array and sort by total time
-    const sortedProjects = Object.values(projectTotals).sort((a, b) => b.value - a.value);
+    // Convert to array, sort by total time
+    const sortedProjectsAll = Object.values(projectTotals).sort((a, b) => b.value - a.value);
 
-    // Take top 4 projects and combine the rest
-    const topProjects = sortedProjects.slice(0, 4);
-    const others = sortedProjects.slice(4);
+    // Find top 4 projects (excluding 'unknown')
+    const knownProjects = sortedProjectsAll.filter((p) => p.label !== 'unknown');
+    const topProjects = knownProjects.slice(0, 4);
+
+    // 'others' includes both remaining known projects and all 'unknown'
+    const remainingKnown = knownProjects.slice(4);
+    const unknownProjects = sortedProjectsAll.filter((p) => p.label === 'unknown');
+    const others = [...remainingKnown, ...unknownProjects];
 
     const othersValue = others.reduce((sum, p) => sum + p.value, 0);
     if (othersValue > 0) {

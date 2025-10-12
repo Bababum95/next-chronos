@@ -14,11 +14,12 @@ export type Summary = {
 };
 
 export type Activity = {
-  alternate_project?: string;
-  git_branch?: string;
-  project_folder?: string;
   time_spent: number;
   timestamp: number;
+  root_project?: {
+    _id: string;
+    name: string;
+  } | null;
 };
 
 export type SummariesResponse = ApiResponse<Summary>;

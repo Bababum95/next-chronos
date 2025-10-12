@@ -94,7 +94,7 @@ export default function Dashboard() {
         </div>
         <ChartArea
           title="Work Activity"
-          description="Tracked time across selected period"
+          description={`Tracked time on ${period?.formatted}`}
           chartData={workActivity.chartData}
           chartConfig={workActivity.chartConfig}
           formatValue={formatValue}
