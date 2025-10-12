@@ -24,7 +24,7 @@ export const useAvatarUpload = () => {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await authenticatedFetch('/api/v1/upload/avatar', {
+      const response = await authenticatedFetch('/upload/avatar', {
         method: 'POST',
         body: formData,
       });
@@ -64,7 +64,7 @@ export const useAvatarUpload = () => {
 
   const deleteAvatarMutation = useMutation({
     mutationFn: async () => {
-      const response = await authenticatedFetch('/api/v1/upload/avatar/delete', {
+      const response = await authenticatedFetch('/upload/avatar/delete', {
         method: 'DELETE',
       });
 

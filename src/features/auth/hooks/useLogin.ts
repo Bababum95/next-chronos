@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 };
 
 // Login mutation function
-const loginUser = createAuthenticatedMutation<UserResponse, SignInInput>('/api/v1/auth/signin');
+const loginUser = createAuthenticatedMutation<UserResponse, SignInInput>('/auth/signin');
 
 export const useLogin = () => {
   const router = useRouter();

@@ -34,7 +34,7 @@ export function UserProvider({ children, initialUser }: UserProviderProps) {
     queryFn: async () => {
       if (!tokenStorage.isAuthenticated()) return null;
       try {
-        const res = await fetcher({ queryKey: [`/api/v1/users/me`] });
+        const res = await fetcher({ queryKey: [`/users/me`] });
         return res.data as UserDoc;
       } catch {
         return null;

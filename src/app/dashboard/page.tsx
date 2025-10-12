@@ -1,25 +1,14 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
-
 import { ChartArea } from '@/components/ChartArea';
-import { ChartLineMultiple } from '@/components/ChartLineMultiple';
 import { Header } from '@/components/Header';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatDuration } from '@/lib/utils/time';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-
-import { useSummaries } from './useSummaries';
-import { useChartData } from './useChartData';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTotalTimeSummary, useActivityAnalytics } from '@/features/dashboard';
+import { TooltipLite } from '@/components/ui/tooltip';
+import { ChartPieDonut } from '@/components/ChartPieDonut';
 
 export default function Dashboard() {
   const {
@@ -28,10 +17,11 @@ export default function Dashboard() {
     timeRanges,
     totalTimeStr,
     workActivity,
-    isLoading: chartDataLoading,
+    isLoading,
+    period,
     projectActivity,
-  } = useChartData();
-  const { totalTimeAllTime, isLoading: summariesLoading } = useSummaries();
+  } = useActivityAnalytics();
+  const totalTime = useTotalTimeSummary();
 
   const formatValue = (value: number | string) => {
     return formatDuration(value as number);
@@ -55,45 +45,51 @@ export default function Dashboard() {
       />
       <div className="px-4 py-4 grid gap-4">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3 mb-4">
-          <Card>
-            <CardHeader>
-              <CardDescription>Total Time (All Time)</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {summariesLoading ? <Skeleton className="w-full h-8" /> : totalTimeAllTime}
-              </CardTitle>
-              <CardAction>
-                <Badge variant="outline">
-                  <TrendingUp />
-                  +8.2%
-                </Badge>
-              </CardAction>
+          <div className="grid gap-2">
+            <Card>
+              <CardContent>
+                <CardDescription>Total Time (All Time)</CardDescription>
+                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                  {totalTime.isLoading ? <Skeleton className="w-full h-8" /> : totalTime.allTime}
+                </CardTitle>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <CardDescription>
+                  Total Time
+                  {period && (
+                    <TooltipLite content={period.formatted}>
+                      <span> ({period.range})</span>
+                    </TooltipLite>
+                  )}
+                </CardDescription>
+                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                  {isLoading ? <Skeleton className="w-full h-8" /> : totalTimeStr}
+                </CardTitle>
+              </CardContent>
+            </Card>
+          </div>
+          <Card className="md:col-span-2">
+            <CardHeader className="items-center pb-0">
+              <CardTitle>Time Spent by Projects</CardTitle>
+              <CardDescription>{period?.formatted}</CardDescription>
             </CardHeader>
-            <CardFooter className="flex-col items-start gap-1.5 text-sm">
-              <div className="line-clamp-1 flex gap-2 font-medium">
-                More time logged this week <TrendingUp className="size-4" />
-              </div>
-              <div className="text-muted-foreground">Compared to the previous 4 weeks</div>
-            </CardFooter>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardDescription>Total Time ({timeRange})</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {chartDataLoading ? <Skeleton className="w-full h-8" /> : totalTimeStr}
-              </CardTitle>
-              <CardAction>
-                <Badge variant="outline">
-                  <TrendingUp />
-                  +8.2%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-1.5 text-sm">
-              <div className="line-clamp-1 flex gap-2 font-medium">
-                More time logged this week <TrendingUp className="size-4" />
-              </div>
-              <div className="text-muted-foreground">Compared to the previous 4 weeks</div>
-            </CardFooter>
+            <CardContent>
+              {!isLoading && projectActivity.chartData?.length < 1 ? (
+                <div className="flex items-center justify-center h-48 text-muted-foreground">
+                  No activity in the selected period
+                </div>
+              ) : (
+                <ChartPieDonut
+                  chartConfig={projectActivity.chartConfig}
+                  chartData={projectActivity.chartData}
+                  formatValue={formatValue}
+                  dataKey="time"
+                  nameKey="project"
+                />
+              )}
+            </CardContent>
           </Card>
         </div>
         <ChartArea
@@ -101,13 +97,6 @@ export default function Dashboard() {
           description="Tracked time across selected period"
           chartData={workActivity.chartData}
           chartConfig={workActivity.chartConfig}
-          formatValue={formatValue}
-        />
-        <ChartLineMultiple
-          title="Project Activity"
-          description="Time spent per project"
-          chartConfig={projectActivity.chartConfig}
-          chartData={projectActivity.chartData}
           formatValue={formatValue}
         />
       </div>

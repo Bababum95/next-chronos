@@ -1,6 +1,6 @@
 import type { ChartConfig } from '@/components/ui/chart';
 
-import { DASHBOARD_CONSTANTS } from './constants';
+import { DASHBOARD_CONSTANTS } from './model/constants';
 
 export type ChartDataPoint = {
   date: string;

@@ -44,7 +44,7 @@ export const useEditProfileForm = () => {
   }));
 
   const updateProfileMutation = useMutation({
-    mutationFn: createAuthenticatedMutation('/api/v1/users/me', { method: 'PUT' }),
+    mutationFn: createAuthenticatedMutation('/users/me', { method: 'PUT' }),
     onSuccess: async () => {
       // Refresh user data from server
       await refreshUser();

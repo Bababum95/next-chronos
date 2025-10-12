@@ -5,13 +5,13 @@ import { env } from '@/config';
 import { SummariesResponse } from '@/lib/api/types';
 import { formatDuration } from '@/lib/utils/time';
 
-type UseSummariesReturn = {
-  totalTimeAllTime: string | null;
+type UseTotalTimeSummaryReturn = {
+  allTime: string | null;
   isLoading: boolean;
   error?: string;
 };
 
-export const useSummaries = (): UseSummariesReturn => {
+export const useTotalTimeSummary = (): UseTotalTimeSummaryReturn => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -19,16 +19,16 @@ export const useSummaries = (): UseSummariesReturn => {
   }, []);
 
   const { data, isLoading, error } = useQuery<SummariesResponse>({
-    queryKey: ['/api/v1/summaries'],
+    queryKey: ['/summaries'],
     enabled: mounted,
     staleTime: env.intervalSec * 1000,
     refetchOnWindowFocus: false,
   });
 
-  const totalTimeAllTime = data?.data?.totalTime ? formatDuration(data.data.totalTime) : null;
+  const allTime = data?.data?.totalTime ? formatDuration(data.data.totalTime) : null;
 
   return {
-    totalTimeAllTime,
+    allTime,
     isLoading: isLoading && mounted,
     error: error?.message,
   };

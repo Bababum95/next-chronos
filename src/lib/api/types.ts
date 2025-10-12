@@ -26,6 +26,8 @@ export type SummariesRangeResponse = ApiResponse<{
   totalTime: number;
   totalTimeStr: string;
   activities?: Activity[][];
+  start: number;
+  end: number;
 }>;
 
 // API Error types

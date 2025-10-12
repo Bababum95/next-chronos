@@ -48,9 +48,7 @@ export const tokenStorage = {
 export const logout = async () => {
   try {
     // Call logout API to clear server-side cookies
-    await fetch('/api/v1/auth/logout', {
-      method: 'POST',
-    });
+    await fetch('/auth/logout', { method: 'POST' });
   } catch (error) {
     console.error('Logout API call failed:', error);
   } finally {

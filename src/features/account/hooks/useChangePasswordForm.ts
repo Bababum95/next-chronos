@@ -42,7 +42,7 @@ export const useChangePasswordForm = () => {
   const [state, setState] = useState<ChangePasswordState>(initialState);
 
   const changePasswordMutation = useMutation({
-    mutationFn: createAuthenticatedMutation('/api/v1/users/me/password', { method: 'PUT' }),
+    mutationFn: createAuthenticatedMutation('/users/me/password', { method: 'PUT' }),
     onSuccess: () => {
       setState((prev) => ({
         ...prev,

@@ -2,7 +2,21 @@
 
 import { toast } from 'sonner';
 
+import { API_PREFIX, env } from '@/config';
 import { tokenStorage } from '@/lib/utils/auth';
+
+/**
+ * Helper function to build API URLs
+ * For auth endpoints, use Next.js API routes
+ * For other endpoints, use external api-chronos service
+ */
+const getApiUrl = (path: string): string => {
+  if (path.startsWith('/auth')) {
+    return `/${API_PREFIX}${path}`;
+  }
+  // All other endpoints go to api-chronos (which has API_PREFIX prefix)
+  return `${env.apiUrl}/${API_PREFIX}${path}`;
+};
 
 // Custom fetch function that automatically adds auth token
 export const authenticatedFetch = async (
@@ -10,8 +24,8 @@ export const authenticatedFetch = async (
   options: RequestInit = {}
 ): Promise<Response> => {
   const token = tokenStorage.getToken();
-
   const headers = new Headers(options.headers);
+  const targetUrl = getApiUrl(url);
 
   // Add Content-Type if not already set
   if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
@@ -23,7 +37,7 @@ export const authenticatedFetch = async (
     headers.set('Authorization', `Basic ${Buffer.from(`${token}:`).toString('base64')}`);
   }
 
-  return fetch(url, {
+  return fetch(targetUrl, {
     ...options,
     headers,
   });
@@ -33,7 +47,9 @@ export const authenticatedFetch = async (
 export const fetcher = async ({ queryKey }: { queryKey: readonly unknown[] }) => {
   const url = queryKey[0] as string;
 
-  const response = url.startsWith('/api/') ? await authenticatedFetch(url) : await fetch(url);
+  // Check if url contains protocol (http:// or https://)
+  const hasProtocol = /^https?:\/\//i.test(url);
+  const response = hasProtocol ? await fetch(url) : await authenticatedFetch(url);
 
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
