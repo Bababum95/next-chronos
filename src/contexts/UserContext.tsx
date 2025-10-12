@@ -2,7 +2,7 @@
 
 import { createContext } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 import { tokenStorage } from '@/lib/utils/auth';
 import { fetcher } from '@/lib/utils/fetcher';
@@ -26,7 +26,6 @@ type UserProviderProps = {
 
 export function UserProvider({ children, initialUser }: UserProviderProps) {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const { data, isLoading, refetch } = useQuery<UserDoc | null>({
     queryKey: ['currentUser'],
     enabled: !!tokenStorage.isAuthenticated(),
@@ -46,10 +45,13 @@ export function UserProvider({ children, initialUser }: UserProviderProps) {
     queryClient.setQueryData(['currentUser'], userData);
   };
 
-  const logout = () => {
-    queryClient.setQueryData(['currentUser'], null);
+  const logout = async () => {
     tokenStorage.removeToken();
-    router.push('/auth/login');
+
+    await signOut({
+      redirect: true,
+      callbackUrl: '/auth/login',
+    });
   };
 
   const refreshUser = async () => {
