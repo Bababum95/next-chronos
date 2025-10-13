@@ -1,0 +1,31 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/lib/**/*.ts",
+    "src/entities/**/*.ts",
+    "src/features/**/*.ts",
+    "src/components/**/*.tsx"
+  ],
+  "tsconfig": "tsconfig.json",
+  "plugin": [
+    "typedoc-plugin-markdown"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.stories.tsx",
+    "**/node_modules/**",
+    "**/app/**"
+  ],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "readme": "none",
+  "categorizeByGroup": true,
+  "visibilityFilters": {
+    "protected": false,
+    "private": false,
+    "inherited": true,
+    "external": false
+  }
+}
