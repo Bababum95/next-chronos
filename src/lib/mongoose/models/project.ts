@@ -10,6 +10,28 @@ export type ProjectDoc = {
   name: string;
 };
 
+// Frontend API types for Projects list
+export type Project = {
+  _id: string;
+  user: string; // user id
+  project_folder: string;
+  git_branches: string[];
+  alternate_project?: string;
+  parent?: string;
+  description?: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+};
+
+export type ProjectListResponse = {
+  items: Project[];
+  total: number;
+  page: number;
+  limit: number;
+};
+
 const ProjectSchema = new Schema<ProjectDoc>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
