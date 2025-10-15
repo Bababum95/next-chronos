@@ -1,61 +1,74 @@
 import { FC } from 'react';
+import { Table } from '@tanstack/react-table';
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { Project } from '@/models/project';
+import {
+  Table as UITable,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-type Props = {
-  items: Project[];
+type Props<TData> = {
+  table: Table<TData>;
   isLoading?: boolean;
 };
 
-export const ProjectsTable: FC<Props> = ({ items, isLoading }) => {
+export const ProjectsTable: FC<Props<any>> = ({ table, isLoading }) => {
   if (isLoading) {
     return (
-      <Table>
+      <UITable>
         <TableHeader>
-          <TableRow>
-            <TableHead>№</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Project Folder</TableHead>
-          </TableRow>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>{header.isPlaceholder ? null : header.column.columnDef.header as any}</TableHead>
+              ))}
+            </TableRow>
+          ))}
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+            <TableCell colSpan={table.getAllLeafColumns().length} className="text-center text-muted-foreground py-8">
               Loading...
             </TableCell>
           </TableRow>
         </TableBody>
-      </Table>
+      </UITable>
     );
   }
 
+  const rows = table.getRowModel().rows;
+
   return (
-    <Table>
+    <UITable>
       <TableHeader>
-        <TableRow>
-          <TableHead>№</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Project Folder</TableHead>
-        </TableRow>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id}>{header.isPlaceholder ? null : header.column.columnDef.header as any}</TableHead>
+            ))}
+          </TableRow>
+        ))}
       </TableHeader>
       <TableBody>
-        {items.length === 0 ? (
+        {rows.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+            <TableCell colSpan={table.getAllLeafColumns().length} className="text-center text-muted-foreground py-8">
               No projects found
             </TableCell>
           </TableRow>
         ) : (
-          items.map((project, idx) => (
-            <TableRow key={project._id}>
-              <TableCell>{idx + 1}</TableCell>
-              <TableCell className="font-medium">{project.name}</TableCell>
-              <TableCell className="text-muted-foreground">{project.project_folder}</TableCell>
+          rows.map((row) => (
+            <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>{cell.getValue() as any}</TableCell>
+              ))}
             </TableRow>
           ))
         )}
       </TableBody>
-    </Table>
+    </UITable>
   );
 };
