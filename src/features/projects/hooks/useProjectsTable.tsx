@@ -1,5 +1,5 @@
-import { ColumnDef, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 import { useProjectsQuery } from '../api/getProjects';
@@ -7,17 +7,18 @@ import type { ProjectType } from '../api/getProjects';
 
 const columnHelper = createColumnHelper<ProjectType>();
 
-const formatDate = (iso?: string) => (iso ? dayjs(iso).format('YYYY-MM-DD HH:mm') : '');
+const formatDate = (iso?: string) => (iso ? dayjs(iso).format('DD MMM YYYY') : '');
 
 export const useProjectsTable = () => {
   const { data, isLoading } = useProjectsQuery();
 
-  const columns: ColumnDef<ProjectType, unknown>[] = useMemo(
+  const columns = useMemo(
     () => [
       columnHelper.display({
         id: 'index',
-        header: '№',
-        cell: (info) => info.row.index + 1,
+        cell: (info) => (
+          <div className="font-bold text-muted-foreground pl-2">{info.row.index + 1}</div>
+        ),
       }),
       columnHelper.accessor('name', {
         header: 'Name',
@@ -31,11 +32,6 @@ export const useProjectsTable = () => {
         id: 'createdAt',
         header: 'Created At',
         cell: (info) => formatDate(info.row.original.createdAt),
-      }),
-      columnHelper.display({
-        id: 'updatedAt',
-        header: 'Updated At',
-        cell: (info) => formatDate(info.row.original.updatedAt),
       }),
     ],
     []
