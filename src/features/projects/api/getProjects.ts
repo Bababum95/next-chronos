@@ -9,6 +9,7 @@ export type ProjectType = {
   project_folder: string;
   git_branches?: string[];
   alternate_project?: string;
+  total_time_spent?: number;
   name: string;
   createdAt: string;
   updatedAt: string;

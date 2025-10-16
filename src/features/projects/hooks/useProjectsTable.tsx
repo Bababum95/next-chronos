@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
+import { Badge } from '@/components/ui/badge';
+import { formatDuration } from '@/lib/utils/time';
 
 import { useProjectsQuery } from '../api/getProjects';
 import type { ProjectType } from '../api/getProjects';
@@ -28,7 +30,7 @@ export type UseProjectsTableOptions = {
 
 export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
   const [page, setPage] = useState<number>(options.page ?? 1);
-  const [limit, setLimit] = useState<number>(options.limit ?? 10);
+  const [limit, setLimit] = useState<number>(options.limit ?? 12);
 
   const { data, isLoading, isFetching } = useProjectsQuery({ page, limit, root: true });
 
@@ -42,7 +44,15 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
       }),
       columnHelper.accessor('name', {
         header: 'Name',
-        cell: (info) => info.getValue() ?? '',
+        cell: (info) => <TruncatedText>{info.getValue()}</TruncatedText>,
+      }),
+      columnHelper.accessor('total_time_spent', {
+        header: 'Total time',
+        cell: (info) => {
+          const value = info.getValue() ?? 0;
+          const formatted = formatDuration(value);
+          return <Badge variant="secondary">{formatted}</Badge>;
+        },
       }),
       columnHelper.accessor('project_folder', {
         header: 'Project Folder',
