@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 import { useProjectsQuery } from '../api/getProjects';
 import type { ProjectType } from '../api/getProjects';
@@ -36,7 +37,7 @@ export const useProjectsTable = () => {
       }),
       columnHelper.accessor('project_folder', {
         header: 'Project Folder',
-        cell: (info) => info.getValue() ?? '',
+        cell: (info) => <TruncatedText>{info.getValue()}</TruncatedText>,
       }),
       columnHelper.display({
         id: 'createdAt',
