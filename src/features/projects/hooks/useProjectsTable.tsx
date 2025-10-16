@@ -30,7 +30,7 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
   const [page, setPage] = useState<number>(options.page ?? 1);
   const [limit, setLimit] = useState<number>(options.limit ?? 10);
 
-  const { data, isLoading, isFetching } = useProjectsQuery({ page, limit, root: options.root });
+  const { data, isLoading, isFetching } = useProjectsQuery({ page, limit, root: true });
 
   const columns = useMemo(
     () => [

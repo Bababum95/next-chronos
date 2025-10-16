@@ -8,13 +8,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { useProjectsTable } from '../hooks/useProjectsTable';
 import { Button } from '@/components/ui/button';
 
+import { useProjectsTable } from '../hooks/useProjectsTable';
+
 export function ProjectsTable() {
-  const { table, isLoading, isFetching, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
-    useProjectsTable({ page: 1, limit: 10 });
+  const {
+    table,
+    isLoading,
+    isFetching,
+    hasData,
+    page,
+    totalPages,
+    nextPage,
+    prevPage,
+    canNext,
+    canPrev,
+  } = useProjectsTable();
 
   if (isLoading) {
     return (
