@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { EllipsisVertical } from 'lucide-react';
 
 import {
@@ -20,8 +20,17 @@ const columnHelper = createColumnHelper<ProjectType>();
 
 const formatDate = (iso?: string) => (iso ? dayjs(iso).format('DD MMM YYYY') : '');
 
-export const useProjectsTable = () => {
-  const { data, isLoading } = useProjectsQuery();
+export type UseProjectsTableOptions = {
+  page?: number;
+  limit?: number;
+  root?: boolean;
+};
+
+export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
+  const [page, setPage] = useState<number>(options.page ?? 1);
+  const [limit, setLimit] = useState<number>(options.limit ?? 10);
+
+  const { data, isLoading, isFetching } = useProjectsQuery({ page, limit, root: true });
 
   const columns = useMemo(
     () => [
@@ -72,11 +81,41 @@ export const useProjectsTable = () => {
     []
   );
 
+  const items = data?.data?.items ?? [];
+  const total = data?.data?.total ?? 0;
+
   const table = useReactTable<ProjectType>({
-    data: data?.data?.items ?? [],
+    data: items,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  return { table, isLoading, hasData: (data?.data?.items?.length ?? 0) > 0 };
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const canPrev = page > 1;
+  const canNext = page < totalPages;
+
+  const nextPage = () => {
+    if (canNext) setPage((p) => p + 1);
+  };
+
+  const prevPage = () => {
+    if (canPrev) setPage((p) => p - 1);
+  };
+
+  return {
+    table,
+    isLoading,
+    isFetching,
+    hasData: items.length > 0,
+    page,
+    limit,
+    total,
+    totalPages,
+    canPrev,
+    canNext,
+    nextPage,
+    prevPage,
+    setPage,
+    setLimit,
+  };
 };
