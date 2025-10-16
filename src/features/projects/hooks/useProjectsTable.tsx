@@ -73,10 +73,10 @@ export const useProjectsTable = () => {
   );
 
   const table = useReactTable<ProjectType>({
-    data: data?.items ?? [],
+    data: data?.data?.items ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  return { table, isLoading, hasData: (data?.items?.length ?? 0) > 0 };
+  return { table, isLoading, hasData: (data?.data?.items?.length ?? 0) > 0 };
 };

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetcher } from '@/lib/utils/fetcher';
+import { ApiResponse } from '@/lib/validation';
 
 export type ProjectType = {
   _id: string;
@@ -14,12 +15,12 @@ export type ProjectType = {
   __v?: number;
 };
 
-export type ProjectsApiResponse = {
+export type ProjectsApiResponse = ApiResponse<{
   items: ProjectType[];
   total: number;
   page: number;
   limit: number;
-};
+}>;
 
 export const getProjects = async (): Promise<ProjectsApiResponse> => {
   const res = await fetcher({ queryKey: ['/projects'] });
