@@ -1,18 +1,20 @@
-"use client";
+'use client';
 
 import { SquarePen } from 'lucide-react';
+import { use } from 'react';
 
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { ProjectDetails } from '@/features/projects/components/ProjectDetails';
 import { useProjectQuery } from '@/features/projects/api/getProject';
 
-type PageProps = {
-  params: { id: string[] };
+type Props = {
+  params: Promise<{ id: string }>;
 };
 
-export default function ProjectDetailsPage({ params }: PageProps) {
-  const routeId = Array.isArray(params.id) ? params.id[0] : params.id;
+export default function ProjectDetailsPage({ params }: Props) {
+  const resolvedParams = use(params);
+  const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
   const { data, isLoading } = useProjectQuery(routeId);
   const project = data?.data;
 

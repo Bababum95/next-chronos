@@ -65,10 +65,6 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
           return <Badge variant="secondary">{formatted}</Badge>;
         },
       }),
-      columnHelper.accessor('project_folder', {
-        header: 'Project Folder',
-        cell: (info) => <TruncatedText>{info.getValue()}</TruncatedText>,
-      }),
       columnHelper.display({
         id: 'createdAt',
         header: 'Created At',

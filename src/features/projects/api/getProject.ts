@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetcher } from '@/lib/utils/fetcher';
 import type { ApiResponse } from '@/lib/validation';
+
 import type { ProjectType } from './getProjects';
 
 export type ProjectApiResponse = ApiResponse<ProjectType>;
