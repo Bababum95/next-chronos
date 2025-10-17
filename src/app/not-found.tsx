@@ -22,15 +22,15 @@ export default function NotFound() {
               deleted, or you might have entered the wrong URL.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-row gap-4 justify-center">
             <Link href="/">
-              <Button className="flex items-center gap-2">
+              <Button>
                 <HomeIcon className="h-4 w-4" />
                 Go Home
               </Button>
             </Link>
             <Button variant="outline" onClick={router.back}>
-              <ArrowLeftIcon className="h-4 w-4 mr-2" />
+              <ArrowLeftIcon className="h-4 w-4" />
               Go Back
             </Button>
           </div>

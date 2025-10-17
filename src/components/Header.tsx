@@ -36,7 +36,7 @@ export const Header: FC<Props> = ({ breadcrumb, extra }) => {
                   <BreadcrumbItem>
                     <BreadcrumbLink href={link.href}>{link.label}</BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbSeparator />
                 </Fragment>
               ))}
             <BreadcrumbItem>

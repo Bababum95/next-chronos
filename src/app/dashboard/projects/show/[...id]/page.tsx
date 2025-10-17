@@ -1,23 +1,25 @@
-import { Plus } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { ProjectsTable } from '@/features/projects';
 
 export default function Projects() {
   return (
     <>
       <Header
-        breadcrumb={{ current: 'Projects' }}
+        breadcrumb={{
+          current: 'Project Details',
+          links: [{ label: 'Projects', href: '/dashboard/projects' }],
+        }}
         extra={
           <Button size="sm">
-            <Plus />
-            Create
+            <SquarePen size={14} />
+            Edit
           </Button>
         }
       />
       <div className="px-4 py-4 grid gap-4">
-        <ProjectsTable />
+        <p>Project Details</p>
       </div>
     </>
   );

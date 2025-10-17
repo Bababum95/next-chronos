@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
@@ -44,7 +45,17 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
       }),
       columnHelper.accessor('name', {
         header: 'Name',
-        cell: (info) => <TruncatedText>{info.getValue()}</TruncatedText>,
+        cell: (info) => {
+          const project = info.row.original;
+          return (
+            <Link
+              href={`/dashboard/projects/show/${project._id}`}
+              className="text-primary hover:underline"
+            >
+              <TruncatedText>{info.getValue()}</TruncatedText>
+            </Link>
+          );
+        },
       }),
       columnHelper.accessor('total_time_spent', {
         header: 'Total time',

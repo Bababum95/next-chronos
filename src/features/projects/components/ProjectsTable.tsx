@@ -1,5 +1,7 @@
+'use client';
+
 import { flexRender } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2, FolderOpen } from 'lucide-react';
 
 import {
   Table,
@@ -10,32 +12,47 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
 import { useProjectsTable } from '../hooks/useProjectsTable';
 
 export function ProjectsTable() {
-  const {
-    table,
-    isLoading,
-    isFetching,
-    hasData,
-    page,
-    totalPages,
-    nextPage,
-    prevPage,
-    canNext,
-    canPrev,
-  } = useProjectsTable();
+  const { table, isLoading, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
+    useProjectsTable();
 
   if (isLoading) {
     return (
-      <div className="rounded border p-4 text-sm text-muted-foreground">Loading projects...</div>
+      <div className="rounded-md border min-h-40 flex items-center justify-center">
+        <Loader2 className="animate-spin size-10" />
+      </div>
     );
   }
 
   if (!hasData) {
     return (
-      <div className="rounded border p-4 text-sm text-muted-foreground">No projects found.</div>
+      <Empty className="rounded-md border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <FolderOpen />
+          </EmptyMedia>
+          <EmptyTitle>No Projects Yet</EmptyTitle>
+          <EmptyDescription>
+            You haven&apos;t created any projects yet. Get started by creating your first project.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <div className="flex gap-2">
+            <Button>Create Project</Button>
+          </div>
+        </EmptyContent>
+      </Empty>
     );
   }
 
