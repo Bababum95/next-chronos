@@ -1,37 +1,26 @@
 import dayjs from 'dayjs';
-import isoWeek from 'dayjs/plugin/isoWeek';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { env } from '@/config';
 import { fetcher } from '@/lib/utils/fetcher';
+import { formatPeriod, formatDate } from '@/lib/utils';
 import { ChartConfig } from '@/components/ui/chart';
+import { useTimeRange } from '@/features/time-range';
 import type { Activity, SummariesRangeResponse } from '@/lib/api/types';
 
-import { DASHBOARD_CONSTANTS } from '../model/constants';
-import type { TimeRange, WorkActivityData } from '../types';
-
-dayjs.extend(isoWeek);
-
-const isTimeRange = (value: string): value is TimeRange => {
-  return DASHBOARD_CONSTANTS.TIME_RANGES.some((range) => range.value === value);
-};
-
-const formatDate = (timeRange: TimeRange, date?: number) => {
-  if (typeof date !== 'number') return '';
-
-  return dayjs.unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
-};
+import { WORK_ACTIVITY } from '../model/constants';
+import type { WorkActivityData } from '../types';
 
 export const useActivityAnalytics = () => {
-  const [timeRange, setTimeRange] = useState<TimeRange>(DASHBOARD_CONSTANTS.DEFAULT_TIME_RANGE);
+  const { range } = useTimeRange();
 
   const { data, isLoading } = useQuery<SummariesRangeResponse>({
-    queryKey: ['/summaries/range', timeRange],
+    queryKey: ['/summaries/range', range.value],
     staleTime: env.intervalSec * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const start = dayjs().startOf(timeRange).unix();
+      const start = dayjs().startOf(range.value).unix();
       const end = dayjs().unix();
       const res = await fetcher({
         queryKey: [`/summaries/range?start=${start}&end=${end}&full=true`],
@@ -40,30 +29,12 @@ export const useActivityAnalytics = () => {
     },
   });
 
-  const onChangeTimeRange = useCallback((value: string) => {
-    if (isTimeRange(value)) setTimeRange(value);
-  }, []);
-
-  const period = useMemo(() => {
-    const { start, end } = data?.data || {};
-
-    if (!start || !end) return null;
-
-    const startDate = dayjs.unix(start);
-    const endDate = dayjs.unix(end);
-
-    return {
-      formatted: `${startDate.format('MMM D HH:mm')} - ${endDate.format('MMM D HH:mm')}`,
-      range: DASHBOARD_CONSTANTS.TIME_RANGES.find((range) => range.value === timeRange)?.label,
-    };
-  }, [data]);
-
   const workActivity = useMemo((): WorkActivityData => {
     if (!data?.data?.activities) {
       return {
         chartData: [],
         totalTimeStr: null,
-        chartConfig: DASHBOARD_CONSTANTS.CHART_CONFIG.WORK_ACTIVITY,
+        chartConfig: WORK_ACTIVITY,
       };
     }
 
@@ -71,7 +42,7 @@ export const useActivityAnalytics = () => {
       const totalTime = slot.reduce((sum, item) => sum + (item.time_spent || 0), 0);
 
       return {
-        date: formatDate(timeRange, slot[0]?.timestamp),
+        date: formatDate(range.value, slot[0]?.timestamp),
         current: totalTime,
       };
     });
@@ -79,9 +50,9 @@ export const useActivityAnalytics = () => {
     return {
       chartData,
       totalTimeStr: data.data.totalTimeStr || '',
-      chartConfig: DASHBOARD_CONSTANTS.CHART_CONFIG.WORK_ACTIVITY,
+      chartConfig: WORK_ACTIVITY,
     };
-  }, [data, timeRange]);
+  }, [data, range.value]);
 
   const projectActivity = useMemo(() => {
     if (!data?.data?.activities) {
@@ -149,16 +120,14 @@ export const useActivityAnalytics = () => {
       chartData,
       chartConfig,
     };
-  }, [data, timeRange]);
+  }, [data, range.value]);
 
   return {
-    timeRange,
-    onChangeTimeRange,
     isLoading,
     workActivity,
     projectActivity,
-    period,
-    timeRanges: DASHBOARD_CONSTANTS.TIME_RANGES,
+    timeRange: range,
+    formatedPeriod: formatPeriod({ start: data?.data?.start, end: data?.data?.end }),
     totalTimeStr: data?.data?.totalTimeStr,
   };
 };

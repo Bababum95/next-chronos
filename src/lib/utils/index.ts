@@ -1,7 +1,7 @@
 export { cn } from './cn';
 
 // Time utilities
-export { toHourEnd, toHourStart } from './time';
+export { toHourEnd, toHourStart, formatPeriod, formatDate } from './time';
 
 // Heartbeat utilities
 export { calculateActiveTime } from './heartbeat';

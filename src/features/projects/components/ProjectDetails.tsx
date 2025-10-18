@@ -1,10 +1,9 @@
 'use client';
 
-import dayjs from 'dayjs';
-import { Loader2, GitBranch, Folder, Timer, CalendarDays } from 'lucide-react';
+import { Loader2, Folder } from 'lucide-react';
+import type { FC } from 'react';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Empty,
   EmptyHeader,
@@ -21,16 +20,23 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
+import { ChartArea } from '@/components/ui/chart-area';
+import { TimeRangeSelector } from '@/features/time-range';
 
-import type { ProjectType } from '../api/getProjects';
+import type { ActivityData, ProjectType } from '../lib/types';
 
-export function ProjectDetails({
-  project,
-  isLoading,
-}: {
+type Props = {
   project?: ProjectType;
   isLoading?: boolean;
-}) {
+  activity: ActivityData;
+  items: {
+    icon: React.ReactNode;
+    description: string;
+    value?: string;
+  }[];
+};
+
+export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items }) => {
   if (isLoading) {
     return (
       <div className="rounded-md border min-h-40 flex items-center justify-center">
@@ -53,8 +59,6 @@ export function ProjectDetails({
     );
   }
 
-  const created = project.createdAt ? dayjs(project.createdAt).format('DD MMM YYYY') : '';
-
   return (
     <>
       <Card>
@@ -64,34 +68,24 @@ export function ProjectDetails({
         </CardContent>
       </Card>
       <ItemGroup className="flex-row flex-wrap gap-2">
-        <Item variant="outline" className="flex-1 min-w-[320px]">
-          <ItemMedia variant="icon">
-            <Folder />
-          </ItemMedia>
-          <ItemContent>
-            <ItemDescription>Project folder</ItemDescription>
-            <ItemTitle>{project.project_folder}</ItemTitle>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" className="flex-1 min-w-[320px]">
-          <ItemMedia variant="icon">
-            <Folder />
-          </ItemMedia>
-          <ItemContent>
-            <ItemDescription>Alternate project</ItemDescription>
-            <ItemTitle>{project.alternate_project}</ItemTitle>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" className="flex-1 min-w-[320px]">
-          <ItemMedia variant="icon">
-            <CalendarDays />
-          </ItemMedia>
-          <ItemContent>
-            <ItemDescription>Created</ItemDescription>
-            <ItemTitle>{created}</ItemTitle>
-          </ItemContent>
-        </Item>
+        {items.map(({ icon, description, value }) => (
+          <Item key={description} variant="outline" className="flex-1 min-w-[320px]">
+            <ItemMedia variant="icon">{icon}</ItemMedia>
+            <ItemContent className="gap-0">
+              <ItemDescription>{description}</ItemDescription>
+              <ItemTitle>{value}</ItemTitle>
+            </ItemContent>
+          </Item>
+        ))}
       </ItemGroup>
+      <ChartArea
+        title={`Work Activity ${activity.totalTimeStr}`}
+        extra={<TimeRangeSelector />}
+        description={`Tracked time on `}
+        chartData={activity.chartData}
+        chartConfig={activity.chartConfig}
+        formatValue={formatDuration}
+      />
     </>
   );
-}
+};

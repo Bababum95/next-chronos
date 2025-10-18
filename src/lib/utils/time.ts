@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const normalizeTimestamp = (timestamp: number): number => {
   // If the absolute value is bigger than ~1e11 treat it as milliseconds.
   // (Unix seconds around 1e9 — timestamps in ms are ~1e12)
@@ -27,8 +29,12 @@ export const toHourEnd = (timestamp: number): number => {
  * @param seconds - Duration in seconds
  * @returns Formatted string like "2h 30m" or "45m"
  */
-export const formatDuration = (seconds: number): string => {
-  if (seconds === 0) return '0m';
+export const formatDuration = (seconds: number | string): string => {
+  if (typeof seconds !== 'number') {
+    seconds = Number(seconds);
+  }
+
+  if (seconds === 0 || isNaN(seconds)) return '0m';
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -38,4 +44,19 @@ export const formatDuration = (seconds: number): string => {
   }
 
   return `${hours}h ${minutes}m`;
+};
+
+export const formatPeriod = ({ start, end }: { start?: number; end?: number } = {}) => {
+  if (!start || !end) return null;
+
+  const startDate = dayjs.unix(start);
+  const endDate = dayjs.unix(end);
+
+  return `${startDate.format('MMM D HH:mm')} - ${endDate.format('MMM D HH:mm')}`;
+};
+
+export const formatDate = (timeRange: string, date?: number) => {
+  if (typeof date !== 'number') return '';
+
+  return dayjs.unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
 };

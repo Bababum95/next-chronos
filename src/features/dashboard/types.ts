@@ -1,7 +1,5 @@
 import type { ChartConfig } from '@/components/ui/chart';
 
-import { DASHBOARD_CONSTANTS } from './model/constants';
-
 export type ChartDataPoint = {
   date: string;
   current: number;
@@ -39,6 +37,3 @@ export type DashboardErrorState = {
   summariesError?: string;
   chartDataError?: string;
 };
-
-export type TimeRange = (typeof DASHBOARD_CONSTANTS.TIME_RANGES)[number]['value'];
-export type TimeRangeOption = (typeof DASHBOARD_CONSTANTS.TIME_RANGES)[number];

@@ -87,7 +87,7 @@ export function ProjectsTable() {
         </Table>
       </div>
       <div className="flex items-center justify-between">
-        <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+        <div className="text-muted-foreground flex-1 text-sm flex">
           Page {page} of {totalPages}
         </div>
         <div className="ml-auto flex items-center gap-2 lg:ml-0">

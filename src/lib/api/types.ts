@@ -16,17 +16,18 @@ export type Summary = {
 export type Activity = {
   time_spent: number;
   timestamp: number;
-  root_project?: {
-    _id: string;
-    name: string;
-  } | null;
 };
 
 export type SummariesResponse = ApiResponse<Summary>;
 export type SummariesRangeResponse = ApiResponse<{
   totalTime: number;
   totalTimeStr: string;
-  activities?: Activity[][];
+  activities?: (Activity & {
+    root_project?: {
+      _id: string;
+      name: string;
+    } | null;
+  })[][];
   start: number;
   end: number;
 }>;

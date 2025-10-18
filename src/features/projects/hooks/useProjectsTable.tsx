@@ -16,8 +16,9 @@ import { TruncatedText } from '@/components/ui/truncated-text';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils/time';
 
-import { useProjectsQuery } from '../api/getProjects';
-import type { ProjectType } from '../api/getProjects';
+import type { ProjectType } from '../lib/types';
+
+import { useProjectsQuery } from './useProjectsQuery';
 
 const columnHelper = createColumnHelper<ProjectType>();
 

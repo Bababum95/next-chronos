@@ -6,7 +6,7 @@ import { use } from 'react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { ProjectDetails } from '@/features/projects/components/ProjectDetails';
-import { useProjectQuery } from '@/features/projects/api/getProject';
+import { useProjectDetails } from '@/features/projects';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,8 +15,8 @@ type Props = {
 export default function ProjectDetailsPage({ params }: Props) {
   const resolvedParams = use(params);
   const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
-  const { data, isLoading } = useProjectQuery(routeId);
-  const project = data?.data;
+
+  const { project, isLoading, activity, items } = useProjectDetails(routeId);
 
   return (
     <>
@@ -33,7 +33,7 @@ export default function ProjectDetailsPage({ params }: Props) {
         }
       />
       <div className="px-4 py-4 grid gap-4">
-        <ProjectDetails project={project} isLoading={isLoading} />
+        <ProjectDetails project={project} isLoading={isLoading} activity={activity} items={items} />
       </div>
     </>
   );
