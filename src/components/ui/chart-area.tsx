@@ -14,7 +14,7 @@ import {
 
 type Props = {
   title: string;
-  description?: string;
+  description?: ReactNode;
   extra?: ReactNode;
   chartConfig: ChartConfig;
   formatValue?: (value: number | string) => string;

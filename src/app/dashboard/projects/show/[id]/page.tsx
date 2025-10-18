@@ -6,7 +6,7 @@ import { use } from 'react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { ProjectDetails } from '@/features/projects/components/ProjectDetails';
-import { useProjectDetails } from '@/features/projects';
+import { useProjectDetails, useProjectActivities } from '@/features/projects';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -16,7 +16,8 @@ export default function ProjectDetailsPage({ params }: Props) {
   const resolvedParams = use(params);
   const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
-  const { project, isLoading, activity, items } = useProjectDetails(routeId);
+  const { project, isLoading, items } = useProjectDetails(routeId);
+  const activity = useProjectActivities(routeId);
 
   return (
     <>

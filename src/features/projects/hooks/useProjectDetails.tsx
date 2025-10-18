@@ -1,50 +1,19 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { Folder, Timer, CalendarDays } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
-import { useTimeRange } from '@/features/time-range';
-import { Activity } from '@/lib/api/types';
-import { formatDate } from '@/lib/utils';
 import { formatDuration } from '@/lib/utils/time';
+import { env } from '@/config';
 
-import { WORK_ACTIVITY } from '../lib/constants';
-import { ActivityData } from '../lib/types';
-
-import { useProjectQuery } from './useProjectQuery';
+import type { ProjectApiResponse } from '../lib/types';
 
 export const useProjectDetails = (id?: string) => {
-  const { range } = useTimeRange();
-  const { data, isLoading } = useProjectQuery(range.value, id);
-
-  const activity = useMemo((): ActivityData => {
-    const project = data?.data;
-
-    if (!project?.activities) {
-      return {
-        chartData: [],
-        totalTimeStr: null,
-        chartConfig: WORK_ACTIVITY,
-      };
-    }
-
-    let totalTime = 0;
-
-    const chartData = project.activities.map((slot: Activity[]) => {
-      const currentTotalTime = slot.reduce((sum, item) => sum + (item.time_spent || 0), 0);
-      totalTime += currentTotalTime;
-
-      return {
-        date: formatDate(range.value, slot[0]?.timestamp),
-        current: currentTotalTime,
-      };
-    });
-
-    return {
-      chartData,
-      totalTimeStr: formatDuration(totalTime ?? 0),
-      chartConfig: WORK_ACTIVITY,
-    };
-  }, [data, range.value]);
+  const { data, isLoading } = useQuery<ProjectApiResponse>({
+    queryKey: id ? [`/projects/${id}`] : ['projects', 'detail'],
+    enabled: !!id,
+    staleTime: env.intervalSec * 1000,
+  });
 
   const items = useMemo(() => {
     const project = data?.data;
@@ -73,5 +42,5 @@ export const useProjectDetails = (id?: string) => {
     ];
   }, [data]);
 
-  return { project: data?.data, isLoading, activity, items };
+  return { project: data?.data, isLoading, items };
 };

@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { env } from '@/config';
+
 import { ProjectsApiResponse } from '../lib/types';
 
 export type GetProjectsParams = {
@@ -20,6 +22,6 @@ export const useProjectsQuery = (params: GetProjectsParams = {}) => {
     queryKey: [url],
     // Preserve previous data while fetching the next page for better UX
     placeholderData: (previousData) => previousData,
-    staleTime: 30_000,
+    staleTime: env.intervalSec * 1000,
   });
 };

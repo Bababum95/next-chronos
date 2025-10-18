@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@/lib/validation';
 import type { ChartConfig } from '@/components/ui/chart';
-import type { Activity } from '@/lib/api/types';
+import type { TimeRangeItem } from '@/features/time-range/lib/types';
 
 export type ChartDataPoint = {
   date: string;
@@ -20,17 +20,15 @@ export type ProjectType = {
   __v?: number;
 };
 
-export type ProjectDetailsType = ProjectType & {
-  activities: Activity[][];
-};
-
 export type ActivityData = {
   chartData: ChartDataPoint[];
   chartConfig: ChartConfig;
   totalTimeStr: string | null;
+  formattedPeriod: string;
+  range: TimeRangeItem;
 };
 
-export type ProjectApiResponse = ApiResponse<ProjectDetailsType>;
+export type ProjectApiResponse = ApiResponse<ProjectType>;
 export type ProjectsApiResponse = ApiResponse<{
   items: ProjectType[];
   total: number;

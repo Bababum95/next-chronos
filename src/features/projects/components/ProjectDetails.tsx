@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/item';
 import { ChartArea } from '@/components/ui/chart-area';
 import { TimeRangeSelector } from '@/features/time-range';
+import { TooltipLite } from '@/components/ui/tooltip';
 
 import type { ActivityData, ProjectType } from '../lib/types';
 
@@ -79,9 +80,18 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items 
         ))}
       </ItemGroup>
       <ChartArea
-        title={`Work Activity ${activity.totalTimeStr}`}
+        title="Work activity"
+        description={
+          <div>
+            <span className="hidden sm:inline">Total time </span>
+            <span className="text-foreground">{activity.totalTimeStr}</span>
+            <span className="hidden sm:inline"> during</span>
+            <TooltipLite content={activity.formattedPeriod}>
+              <span className="hidden sm:inline"> {activity.range.label}</span>
+            </TooltipLite>
+          </div>
+        }
         extra={<TimeRangeSelector />}
-        description={`Tracked time on `}
         chartData={activity.chartData}
         chartConfig={activity.chartConfig}
         formatValue={formatDuration}
