@@ -160,7 +160,6 @@ export const useEditProfileForm = () => {
     } catch {
       return false;
     }
-    return true;
   }, [state.data, user, validateForm, updateProfileMutation]);
 
   const resetForm = useCallback(() => {

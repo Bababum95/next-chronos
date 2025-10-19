@@ -72,7 +72,7 @@ export const createAuthenticatedMutation = <TData = unknown, TVariables = unknow
   url: string,
   options: Omit<RequestInit, 'body'> = {}
 ) => {
-  return async (variables: TVariables): Promise<TData> => {
+  return async (variables?: TVariables): Promise<TData> => {
     const response = await authenticatedFetch(url, {
       ...options,
       method: options.method || 'POST',
