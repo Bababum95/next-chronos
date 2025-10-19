@@ -2,7 +2,7 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
-import { EllipsisVertical } from 'lucide-react';
+import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -36,6 +36,14 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
 
   const { data, isLoading, isFetching } = useProjectsQuery({ page, limit, root: true });
 
+  // const handleFavorite = useCallback((id: string, isFavorite?: boolean) => {
+  //   if (isFavorite) {
+  //     axios.patch(`/api/projects/remove-from-favorite/${id}`);
+  //   } else {
+  //     axios.patch(`/api/projects/add-to-favorite/${id}`);
+  //   }
+  // }, []);
+
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -47,12 +55,10 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
       columnHelper.accessor('name', {
         header: 'Name',
         cell: (info) => {
-          const project = info.row.original;
+          const id = info.row.original._id;
+
           return (
-            <Link
-              href={`/dashboard/projects/show/${project._id}`}
-              className="text-primary hover:underline"
-            >
+            <Link href={`/dashboard/projects/show/${id}`} className="hover:underline">
               <TruncatedText>{info.getValue()}</TruncatedText>
             </Link>
           );
@@ -73,27 +79,54 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
       }),
       columnHelper.display({
         id: 'actions',
-        cell: () => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                size="icon"
-              >
-                <EllipsisVertical />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-32" side="left">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Make a copy</DropdownMenuItem>
-              <DropdownMenuItem>Favorite</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
+        cell: (info) => {
+          const project = info.row.original;
+          const id = project._id;
+
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                  size="icon"
+                >
+                  <EllipsisVertical />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-40" side="left">
+                <Link href={`/dashboard/projects/show/${id}`}>
+                  <DropdownMenuItem>
+                    <Eye />
+                    Show
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem>
+                  <Pencil />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Star
+                    fill={project.is_favorite ? 'hsl(var(--primary))' : 'none'}
+                    stroke={project.is_favorite ? 'hsl(var(--primary))' : 'currentColor'}
+                  />
+                  Favorite
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Archive />
+                  Archive
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive">
+                  <Trash className="text-destructive" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
       }),
     ],
     []

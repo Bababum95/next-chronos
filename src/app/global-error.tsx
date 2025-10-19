@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { AlertTriangleIcon, HomeIcon, RefreshCcwIcon } from 'lucide-react';
 
-import '@/app/globals.css';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,9 +23,7 @@ export default function GlobalError({
   const isDev = process.env.NODE_ENV !== 'production';
 
   // Log for local debugging while avoiding noisy production logs
-  if (isDev) {
-    console.error(error);
-  }
+  if (isDev) console.error(error);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">

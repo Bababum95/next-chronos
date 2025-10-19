@@ -15,6 +15,8 @@ export type ProjectType = {
   alternate_project?: string;
   total_time_spent?: number;
   name: string;
+  is_favorite?: boolean;
+  is_archived?: boolean;
   createdAt: string;
   updatedAt: string;
   __v?: number;
