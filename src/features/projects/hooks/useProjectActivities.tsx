@@ -50,9 +50,9 @@ export const useProjectActivities = (id?: string) => {
     return {
       chartData,
       range,
-      totalTimeStr: data.data.totalTimeStr || '',
+      totalTimeStr: data.data.totalTimeStr ?? '',
       chartConfig: WORK_ACTIVITY,
-      formattedPeriod: formatPeriod({ start: data?.data?.start, end: data?.data?.end }),
+      formattedPeriod: formatPeriod({ start: data?.data?.start, end: data?.data?.end }) ?? '',
     };
   }, [data, range.value]);
 
