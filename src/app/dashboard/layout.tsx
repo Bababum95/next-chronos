@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { AppSidebar } from '@/components/AppSidebar';
+import { AppSidebar } from '@/widgets/app-sidebar';
 import { UserProvider } from '@/contexts/UserContext';
 import { getCurrentUser } from '@/lib/auth';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';

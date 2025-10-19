@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Moon, Sun } from 'lucide-react';
+import { BadgeCheck, ChevronsUpDown, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import type { FC } from 'react';
 
