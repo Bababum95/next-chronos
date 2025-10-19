@@ -1,5 +1,6 @@
-import type { Metadata, Viewport } from 'next';
+import NextTopLoader from 'nextjs-toploader';
 import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
 
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -53,6 +54,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider>
             <QueryProvider>
+              <NextTopLoader
+                color="hsl(var(--primary))"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={3}
+                crawl={true}
+                easing="ease"
+                speed={200}
+                showSpinner={false}
+              />
               <div className="flex min-h-screen flex-col">
                 <main className="flex-1">{children}</main>
                 <Toaster />
