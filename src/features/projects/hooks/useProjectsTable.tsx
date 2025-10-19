@@ -3,8 +3,6 @@ import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash, Loader2 } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import {
   DropdownMenu,
@@ -17,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils/time';
-import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 
 import type { ProjectType } from '../lib/types';
 
 import { useProjectsQuery } from './useProjectsQuery';
+import { useFavoriteMutation } from './useFavoriteMutation';
 
 const columnHelper = createColumnHelper<ProjectType>();
 
@@ -36,32 +34,15 @@ export type UseProjectsTableOptions = {
 export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
   const [page, setPage] = useState<number>(options.page ?? 1);
   const [limit, setLimit] = useState<number>(options.limit ?? 12);
-  const [pendingFavoriteId, setPendingFavoriteId] = useState<string | null>(null);
 
   const { data, isLoading, isFetching, refetch } = useProjectsQuery({
     page,
     limit,
     root: true,
   });
-  const toggleFavoriteMutation = useMutation({
-    mutationFn: async ({ id, isFavorite }: { id: string; isFavorite?: boolean }) => {
-      setPendingFavoriteId(id);
-      const endpoint = isFavorite
-        ? `/projects/remove-from-favorite/${id}`
-        : `/projects/add-to-favorite/${id}`;
 
-      return createAuthenticatedMutation(endpoint, { method: 'PATCH' })();
-    },
-    onSuccess: async (_, { isFavorite }) => {
-      await refetch();
-      toast.success(isFavorite ? 'Project removed from favorites' : 'Project added to favorites');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update favorite status');
-    },
-    onSettled: () => {
-      setPendingFavoriteId(null);
-    },
+  const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
+    onSuccess: async () => await refetch(),
   });
 
   const columns = [
@@ -128,17 +109,12 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 disabled={pendingFavoriteId === id}
-                onClick={() =>
-                  toggleFavoriteMutation.mutateAsync({ id, isFavorite: project.is_favorite })
-                }
+                onClick={() => toggleFavorite({ id, isFavorite: project.is_favorite })}
               >
                 {pendingFavoriteId === id ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  <Star
-                    fill={project.is_favorite ? 'hsl(var(--primary))' : 'none'}
-                    stroke={project.is_favorite ? 'hsl(var(--primary))' : 'currentColor'}
-                  />
+                  <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
                 )}
                 Favorite
               </DropdownMenuItem>

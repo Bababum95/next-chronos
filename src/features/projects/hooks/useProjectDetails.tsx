@@ -9,7 +9,7 @@ import { env } from '@/config';
 import type { ProjectApiResponse } from '../lib/types';
 
 export const useProjectDetails = (id?: string) => {
-  const { data, isLoading } = useQuery<ProjectApiResponse>({
+  const { data, isLoading, refetch } = useQuery<ProjectApiResponse>({
     queryKey: id ? [`/projects/${id}`] : ['projects', 'detail'],
     enabled: !!id,
     staleTime: env.intervalSec * 1000,
@@ -42,5 +42,5 @@ export const useProjectDetails = (id?: string) => {
     ];
   }, [data]);
 
-  return { project: data?.data, isLoading, items };
+  return { project: data?.data, isLoading, items, refetch };
 };

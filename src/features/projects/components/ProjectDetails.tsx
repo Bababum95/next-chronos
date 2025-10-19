@@ -1,9 +1,10 @@
 'use client';
 
-import { Loader2, Folder } from 'lucide-react';
+import { Loader2, Folder, Star } from 'lucide-react';
 import type { FC } from 'react';
+import type { QueryObserverResult } from '@tanstack/react-query';
 
-import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardTitle, CardDescription, CardAction, CardHeader } from '@/components/ui/card';
 import {
   Empty,
   EmptyHeader,
@@ -23,13 +24,16 @@ import {
 import { ChartArea } from '@/components/ui/chart-area';
 import { TimeRangeSelector } from '@/features/time-range';
 import { TooltipLite } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 
-import type { ActivityData, ProjectType } from '../lib/types';
+import { useFavoriteMutation } from '../hooks/useFavoriteMutation';
+import type { ActivityData, ProjectType, ProjectApiResponse } from '../lib/types';
 
 type Props = {
   project?: ProjectType;
   isLoading?: boolean;
   activity: ActivityData;
+  refetch: () => Promise<QueryObserverResult<ProjectApiResponse, Error>>;
   items: {
     icon: React.ReactNode;
     description: string;
@@ -37,7 +41,11 @@ type Props = {
   }[];
 };
 
-export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items }) => {
+export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items, refetch }) => {
+  const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
+    onSuccess: async () => await refetch(),
+  });
+
   if (isLoading) {
     return (
       <div className="rounded-md border min-h-40 flex items-center justify-center">
@@ -63,10 +71,24 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items 
   return (
     <>
       <Card>
-        <CardContent>
-          <CardTitle className="text-xl mb-1">{project.name}</CardTitle>
+        <CardHeader>
+          <CardTitle className="text-xl">{project.name}</CardTitle>
           <CardDescription>Project overview and metadata</CardDescription>
-        </CardContent>
+          <CardAction>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => toggleFavorite({ id: project._id, isFavorite: project.is_favorite })}
+              disabled={pendingFavoriteId === project._id}
+            >
+              {pendingFavoriteId === project._id ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
+              )}
+            </Button>
+          </CardAction>
+        </CardHeader>
       </Card>
       <ItemGroup className="flex-row flex-wrap gap-2">
         {items.map(({ icon, description, value }) => (

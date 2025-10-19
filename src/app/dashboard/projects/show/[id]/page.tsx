@@ -16,7 +16,7 @@ export default function ProjectDetailsPage({ params }: Props) {
   const resolvedParams = use(params);
   const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
-  const { project, isLoading, items } = useProjectDetails(routeId);
+  const { project, isLoading, items, refetch } = useProjectDetails(routeId);
   const activity = useProjectActivities(routeId);
 
   return (
@@ -34,7 +34,13 @@ export default function ProjectDetailsPage({ params }: Props) {
         }
       />
       <div className="px-4 py-4 grid gap-4">
-        <ProjectDetails project={project} isLoading={isLoading} activity={activity} items={items} />
+        <ProjectDetails
+          project={project}
+          isLoading={isLoading}
+          activity={activity}
+          items={items}
+          refetch={refetch}
+        />
       </div>
     </>
   );
