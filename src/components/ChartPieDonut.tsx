@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Pie, PieChart } from 'recharts';
 import { FC, Fragment } from 'react';
 
@@ -17,8 +18,42 @@ import {
   ItemMedia,
   ItemContent,
   ItemTitle,
-  ItemActions,
 } from '@/components/ui/item';
+
+type LegendProps = {
+  percentage?: number;
+  backgroundColor: string;
+  title: string;
+  formatValue?: (value: number | string) => string;
+  data: number | string;
+  url?: string;
+};
+
+const Legend: FC<LegendProps> = ({
+  percentage,
+  backgroundColor,
+  title,
+  formatValue,
+  data,
+  url,
+}) => {
+  const content = (
+    <Item size="xs">
+      <ItemMedia className="!self-center">
+        <div className="rounded-full size-3" style={{ backgroundColor }} />
+      </ItemMedia>
+      <ItemContent className="gap-0">
+        <ItemTitle>{title}</ItemTitle>
+      </ItemContent>
+      {percentage && <span className="text-muted-foreground">{percentage}%</span>}
+      <div className="min-w-[80px] text-right">{formatValue ? formatValue(data) : data}</div>
+    </Item>
+  );
+
+  if (url) return <Link href={url}>{content}</Link>;
+
+  return content;
+};
 
 type Props = {
   chartConfig: ChartConfig;
@@ -53,18 +88,14 @@ export const ChartPieDonut: FC<Props> = ({
       <ItemGroup className="flex-1">
         {chartData.map((data, index) => (
           <Fragment key={index}>
-            <Item size="xs">
-              <ItemMedia className="!self-center">
-                <div className="rounded-full size-3" style={{ backgroundColor: data.fill }} />
-              </ItemMedia>
-              <ItemContent className="gap-0">
-                <ItemTitle>{data[nameKey]}</ItemTitle>
-              </ItemContent>
-              {data.percentage && <span className="text-muted-foreground">{data.percentage}%</span>}
-              <div className="min-w-[80px] text-right">
-                {formatValue ? formatValue(data[dataKey]) : data[dataKey]}
-              </div>
-            </Item>
+            <Legend
+              backgroundColor={data.fill}
+              title={data[nameKey]}
+              percentage={data.percentage}
+              formatValue={formatValue}
+              data={data[dataKey]}
+              url={data.url}
+            />
             {index !== chartData.length - 1 && <ItemSeparator />}
           </Fragment>
         ))}

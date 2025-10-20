@@ -59,7 +59,7 @@ export const useActivityAnalytics = () => {
       return { chartData: [], chartConfig: {} };
     }
 
-    const projectTotals: Record<string, { label: string; value: number }> = {};
+    const projectTotals: Record<string, { label: string; value: number; url?: string }> = {};
 
     for (const slot of data.data.activities) {
       for (const item of slot) {
@@ -70,6 +70,9 @@ export const useActivityAnalytics = () => {
             label: project,
             value: item.time_spent,
           };
+
+          const id = item.root_project?._id;
+          if (id) projectTotals[project].url = `/dashboard/projects/show/${id}`;
         } else {
           projectTotals[project].value += item.time_spent;
         }
@@ -103,6 +106,7 @@ export const useActivityAnalytics = () => {
     const chartData = topProjects.map((p, index) => ({
       project: p.label,
       time: p.value,
+      url: p.url,
       percentage: totalTime > 0 ? Math.round((p.value / totalTime) * 100) : 0,
       fill: `hsl(var(--chart-${index + 1}))`,
     }));
