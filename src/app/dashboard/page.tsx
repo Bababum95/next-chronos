@@ -15,6 +15,14 @@ export default function Dashboard() {
     useActivityAnalytics();
   const totalTime = useTotalTimeSummary();
 
+  const period = formatedPeriod ? (
+    <TooltipLite content={formatedPeriod}>
+      <span>{timeRange.label}</span>
+    </TooltipLite>
+  ) : (
+    timeRange.label
+  );
+
   return (
     <>
       <Header breadcrumb={{ current: 'Dashboard' }} extra={<TimeRangeSelector />} />
@@ -31,14 +39,7 @@ export default function Dashboard() {
             </Card>
             <Card>
               <CardContent>
-                <CardDescription>
-                  Total Time
-                  {formatedPeriod && (
-                    <TooltipLite content={formatedPeriod}>
-                      <span> ({timeRange.label})</span>
-                    </TooltipLite>
-                  )}
-                </CardDescription>
+                <CardDescription>Total Time ({period})</CardDescription>
                 <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                   {isLoading ? <Skeleton className="w-full h-8" /> : totalTimeStr}
                 </CardTitle>
@@ -71,7 +72,7 @@ export default function Dashboard() {
         </div>
         <ChartArea
           title="Work Activity"
-          description={`Tracked time on ${formatedPeriod}`}
+          description={<>Tracked time on {period}</>}
           chartData={workActivity.chartData}
           chartConfig={workActivity.chartConfig}
           formatValue={formatDuration}

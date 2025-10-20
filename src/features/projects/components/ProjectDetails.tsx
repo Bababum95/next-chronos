@@ -106,7 +106,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
         description={
           <div>
             <span className="hidden sm:inline">Total time </span>
-            <span className="text-foreground">{activity.totalTimeStr}</span>
+            <span className="text-foreground h-3 inline-block">{activity.totalTimeStr}</span>
             <span className="hidden sm:inline"> during</span>
             <TooltipLite content={activity.formattedPeriod}>
               <span className="hidden sm:inline"> {activity.range.label}</span>
