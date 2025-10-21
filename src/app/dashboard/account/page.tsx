@@ -12,7 +12,7 @@ import { TooltipLite } from '@/components/ui/tooltip';
 
 export default function Account() {
   const { user } = useUser();
-  const { name, email, avatarUrl } = user || {};
+  const { name, email, avatarUrl, apiKey } = user || {};
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function Account() {
             </div>
           </CardContent>
         </Card>
-        <ApiKeyCard />
+        <ApiKeyCard apiKey={apiKey} />
       </div>
     </>
   );
