@@ -3,7 +3,7 @@
 import { SquarePen } from 'lucide-react';
 import { use } from 'react';
 
-import { Header } from '@/components/Header';
+import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
 import { ProjectDetails } from '@/features/projects/components/ProjectDetails';
 import { useProjectDetails, useProjectActivities } from '@/features/projects';

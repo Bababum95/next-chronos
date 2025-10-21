@@ -1,12 +1,14 @@
 import Link from 'next/link';
 
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/layouts/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PublicHeader } from '@/components/layouts/PublicHeader';
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <PublicHeader />
       <div className="flex min-h-screen flex-col">
         {/* Hero / Preview section */}
         <section className="flex flex-1 items-center">

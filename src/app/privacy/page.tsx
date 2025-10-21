@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/layouts/Footer';
+import { PublicHeader } from '@/components/layouts/PublicHeader';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - Chronos',
@@ -10,8 +11,9 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
+      <PublicHeader />
       <div className="min-h-screen">
-        <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none">
             <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
 

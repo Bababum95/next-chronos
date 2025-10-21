@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation';
 import { HomeIcon, ArrowLeftIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/layouts/Footer';
+import { PublicHeader } from '@/components/layouts/PublicHeader';
 
 export default function NotFound() {
   const router = useRouter();
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PublicHeader />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="text-center max-w-md mx-auto">
           <div className="mb-8">

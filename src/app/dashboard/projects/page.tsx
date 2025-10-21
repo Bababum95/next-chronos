@@ -1,4 +1,4 @@
-import { Header } from '@/components/Header';
+import { Header } from '@/components/layouts/Header';
 import { ProjectsTable } from '@/features/projects';
 
 export default function Projects() {

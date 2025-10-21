@@ -1,7 +1,7 @@
 'use client';
 
 import { ChartArea } from '@/components/ui/chart-area';
-import { Header } from '@/components/Header';
+import { Header } from '@/components/layouts/Header';
 import { formatDuration } from '@/lib/utils/time';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

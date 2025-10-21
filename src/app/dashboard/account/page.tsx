@@ -2,7 +2,7 @@
 
 import { CirclePlus } from 'lucide-react';
 
-import { Header } from '@/components/Header';
+import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/lib/hooks/useUser';
