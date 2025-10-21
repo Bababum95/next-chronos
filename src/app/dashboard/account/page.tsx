@@ -6,7 +6,7 @@ import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/lib/hooks/useUser';
-import { EditProfileDialog, ChangePasswordDialog } from '@/features/account';
+import { EditProfileDialog, ChangePasswordDialog, ApiKeyCard } from '@/features/account';
 import { UserAvatar } from '@/entities/user';
 import { TooltipLite } from '@/components/ui/tooltip';
 
@@ -51,6 +51,7 @@ export default function Account() {
             </div>
           </CardContent>
         </Card>
+        <ApiKeyCard />
       </div>
     </>
   );
