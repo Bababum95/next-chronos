@@ -1,8 +1,9 @@
 'use client';
 
-import { FC, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { FC, useEffect, useMemo } from 'react';
+import { useForm } from '@tanstack/react-form';
+import { z } from 'zod';
+import { zodValidator } from '@tanstack/zod-form-adapter';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,8 +19,6 @@ import {
 import type { ProjectType } from '../lib/types';
 import { ProjectFormSchema, type ProjectFormValues } from '../hooks/useProjectForm';
 
-// Schema and type imported from hook to keep a single source of truth
-
 export interface ProjectFormProps {
   defaultValues?: Partial<ProjectType>;
   onSubmit: (data: ProjectFormValues) => Promise<void>;
@@ -27,54 +26,56 @@ export interface ProjectFormProps {
 }
 
 export const ProjectForm: FC<ProjectFormProps> = ({ defaultValues, onSubmit, isLoading }) => {
-  const form = useForm<ProjectFormValues>({
-    resolver: zodResolver(ProjectFormSchema),
-    defaultValues: {
+  const initialValues = useMemo<ProjectFormValues>(
+    () => ({
       name: defaultValues?.name ?? '',
       project_folder: defaultValues?.project_folder ?? '',
       description: defaultValues?.description ?? '',
       git_branches: defaultValues?.git_branches ?? [],
       is_favorite: defaultValues?.is_favorite ?? false,
       is_archived: defaultValues?.is_archived ?? false,
+    }),
+    [defaultValues]
+  );
+
+  const form = useForm<ProjectFormValues>({
+    defaultValues: initialValues,
+    validatorAdapter: zodValidator(),
+    onSubmit: async ({ value }) => {
+      await onSubmit(value);
     },
   });
 
-  const errors = form.formState.errors;
-
-  // Keep form values in sync when defaultValues change (e.g., after data loads)
+  // Keep values in sync when defaults change
   useEffect(() => {
-    form.reset({
-      name: defaultValues?.name ?? '',
-      project_folder: defaultValues?.project_folder ?? '',
-      description: defaultValues?.description ?? '',
-      git_branches: defaultValues?.git_branches ?? [],
-      is_favorite: defaultValues?.is_favorite ?? false,
-      is_archived: defaultValues?.is_archived ?? false,
-    });
-  }, [defaultValues, form]);
+    form.reset(initialValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValues]);
+
+  const errors = form.state.errors;
 
   const handleAddBranch = () => {
     const value = prompt('Enter branch name');
     if (value && value.trim()) {
-      const current = form.getValues('git_branches') || [];
-      form.setValue('git_branches', [...current, value.trim()], { shouldValidate: true });
+      const current = form.state.values.git_branches ?? [];
+      form.setFieldValue('git_branches', [...current, value.trim()]);
     }
   };
 
   const handleRemoveBranch = (index: number) => {
-    const current = form.getValues('git_branches') || [];
-    form.setValue(
+    const current = form.state.values.git_branches ?? [];
+    form.setFieldValue(
       'git_branches',
-      current.filter((_, i) => i !== index),
-      { shouldValidate: true }
+      current.filter((_, i) => i !== index)
     );
   };
 
   return (
     <form
-      onSubmit={form.handleSubmit(async (data) => {
-        await onSubmit(data);
-      })}
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
       className="space-y-6"
     >
       <FieldSet>
@@ -82,28 +83,45 @@ export const ProjectForm: FC<ProjectFormProps> = ({ defaultValues, onSubmit, isL
           <Field>
             <FieldLabel>
               <FieldTitle>Name</FieldTitle>
-              <Input {...form.register('name')} placeholder="Project name" />
+              <Input
+                value={form.state.values.name}
+                onChange={(e) => form.setFieldValue('name', e.target.value)}
+                onBlur={() => form.validateField('name', ProjectFormSchema.shape.name)}
+                placeholder="Project name"
+              />
             </FieldLabel>
-            <FieldError errors={errors.name ? [{ message: errors.name.message }] : []} />
+            <FieldError errors={errors.name ? [{ message: errors.name as unknown as string }] : []} />
           </Field>
 
           <Field>
             <FieldLabel>
               <FieldTitle>Project folder</FieldTitle>
-              <Input {...form.register('project_folder')} placeholder="/path/to/folder" />
+              <Input
+                value={form.state.values.project_folder}
+                onChange={(e) => form.setFieldValue('project_folder', e.target.value)}
+                onBlur={() => form.validateField('project_folder', ProjectFormSchema.shape.project_folder)}
+                placeholder="/path/to/folder"
+              />
             </FieldLabel>
             <FieldError
-              errors={errors.project_folder ? [{ message: errors.project_folder.message }] : []}
+              errors={
+                errors.project_folder ? [{ message: errors.project_folder as unknown as string }] : []
+              }
             />
           </Field>
 
           <Field>
             <FieldLabel>
               <FieldTitle>Description</FieldTitle>
-              <Input {...form.register('description')} placeholder="Optional description" />
+              <Input
+                value={form.state.values.description ?? ''}
+                onChange={(e) => form.setFieldValue('description', e.target.value)}
+                onBlur={() => form.validateField('description', ProjectFormSchema.shape.description)}
+                placeholder="Optional description"
+              />
             </FieldLabel>
             <FieldError
-              errors={errors.description ? [{ message: errors.description.message }] : []}
+              errors={errors.description ? [{ message: errors.description as unknown as string }] : []}
             />
           </Field>
 
@@ -112,14 +130,14 @@ export const ProjectForm: FC<ProjectFormProps> = ({ defaultValues, onSubmit, isL
               <FieldTitle>Git branches</FieldTitle>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-2">
-                  {(form.watch('git_branches') || []).map((branch, index) => (
+                  {(form.state.values.git_branches || []).map((branch, index) => (
                     <div key={`${branch}-${index}`} className="flex items-center gap-2">
                       <Input
                         value={branch}
                         onChange={(e) => {
-                          const next = [...(form.getValues('git_branches') || [])];
+                          const next = [...(form.state.values.git_branches || [])];
                           next[index] = e.target.value;
-                          form.setValue('git_branches', next, { shouldValidate: true });
+                          form.setFieldValue('git_branches', next);
                         }}
                         className="w-64"
                       />
@@ -137,39 +155,33 @@ export const ProjectForm: FC<ProjectFormProps> = ({ defaultValues, onSubmit, isL
               </div>
             </FieldLabel>
             <FieldError
-              errors={errors.git_branches ? [{ message: errors.git_branches.message as string }] : []}
+              errors={errors.git_branches ? [{ message: errors.git_branches as unknown as string }] : []}
             />
           </Field>
 
           <Field>
             <div className="flex items-center gap-6">
-              <Controller
-                control={form.control}
-                name="is_favorite"
-                render={({ field }) => (
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} />
-                    <span>Favorite</span>
-                  </label>
-                )}
-              />
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={Boolean(form.state.values.is_favorite)}
+                  onCheckedChange={(v) => form.setFieldValue('is_favorite', Boolean(v))}
+                />
+                <span>Favorite</span>
+              </label>
 
-              <Controller
-                control={form.control}
-                name="is_archived"
-                render={({ field }) => (
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} />
-                    <span>Archived</span>
-                  </label>
-                )}
-              />
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={Boolean(form.state.values.is_archived)}
+                  onCheckedChange={(v) => form.setFieldValue('is_archived', Boolean(v))}
+                />
+                <span>Archived</span>
+              </label>
             </div>
             <FieldError
-              errors={errors.is_favorite ? [{ message: errors.is_favorite.message as string }] : []}
+              errors={errors.is_favorite ? [{ message: errors.is_favorite as unknown as string }] : []}
             />
             <FieldError
-              errors={errors.is_archived ? [{ message: errors.is_archived.message as string }] : []}
+              errors={errors.is_archived ? [{ message: errors.is_archived as unknown as string }] : []}
             />
           </Field>
         </FieldGroup>
