@@ -29,6 +29,8 @@ import { Button } from '@/components/ui/button';
 import { useFavoriteMutation } from '../hooks/useFavoriteMutation';
 import type { ActivityData, ProjectType, ProjectApiResponse } from '../lib/types';
 
+import { ProjectLoadingCard } from './ProjectLoadingCard';
+
 type Props = {
   project?: ProjectType;
   isLoading?: boolean;
@@ -46,13 +48,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
     onSuccess: async () => await refetch(),
   });
 
-  if (isLoading) {
-    return (
-      <div className="rounded-md border min-h-40 flex items-center justify-center">
-        <Loader2 className="animate-spin size-10" />
-      </div>
-    );
-  }
+  if (isLoading) return <ProjectLoadingCard />;
 
   if (!project) {
     return (

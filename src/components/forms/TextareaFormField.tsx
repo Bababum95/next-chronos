@@ -1,19 +1,26 @@
 import type { FC } from 'react';
 
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { cn } from '@/lib/utils';
 
-type Props = React.ComponentProps<'input'> & {
+type Props = React.ComponentProps<'textarea'> & {
   label?: string;
   error?: string;
 };
 
-export const FormField: FC<Props> = ({ id, label, error, required, className, ...props }) => {
+export const TextareaFormField: FC<Props> = ({
+  id,
+  label,
+  error,
+  required,
+  className,
+  ...props
+}) => {
   return (
     <Field>
       {label && <FieldLabel htmlFor={id}>{label}</FieldLabel>}
-      <Input id={id} className={cn(error ? 'border-destructive' : '', className)} {...props} />
+      <Textarea id={id} className={cn(error ? 'border-destructive' : '', className)} {...props} />
       {error && <FieldError>{error}</FieldError>}
     </Field>
   );

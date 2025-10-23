@@ -1,7 +1,7 @@
 'use client';
 
 import { flexRender } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, Loader2, FolderOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FolderOpen } from 'lucide-react';
 
 import {
   Table,
@@ -23,17 +23,13 @@ import {
 
 import { useProjectsTable } from '../hooks/useProjectsTable';
 
+import { ProjectLoadingCard } from './ProjectLoadingCard';
+
 export function ProjectsTable() {
   const { table, isLoading, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
     useProjectsTable();
 
-  if (isLoading) {
-    return (
-      <div className="rounded-md border min-h-40 flex items-center justify-center">
-        <Loader2 className="animate-spin size-10" />
-      </div>
-    );
-  }
+  if (isLoading) return <ProjectLoadingCard />;
 
   if (!hasData) {
     return (

@@ -10,16 +10,16 @@ export type ChartDataPoint = {
 export type ProjectType = {
   _id: string;
   user: string;
+  name: string;
+  description?: string;
   project_folder: string;
   git_branches?: string[];
   alternate_project?: string;
   total_time_spent?: number;
-  name: string;
   is_favorite?: boolean;
   is_archived?: boolean;
   createdAt: string;
   updatedAt: string;
-  __v?: number;
 };
 
 export type ActivityData = {
@@ -30,6 +30,7 @@ export type ActivityData = {
   range: TimeRangeItem;
 };
 
+export type ProjectFormData = Partial<ProjectType>;
 export type ProjectApiResponse = ApiResponse<ProjectType>;
 export type ProjectsApiResponse = ApiResponse<{
   items: ProjectType[];
