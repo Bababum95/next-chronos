@@ -6,7 +6,13 @@ import { use } from 'react';
 
 import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
-import { useProjectDetails, useProjectActivities, ProjectDetails } from '@/features/projects';
+import {
+  useProjectDetails,
+  useProjectActivities,
+  ProjectDetails,
+  useProjectsTable,
+  ProjectsTable,
+} from '@/features/projects';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
@@ -27,6 +33,11 @@ export default function ProjectDetailsPage({ params }: Props) {
 
   const { project, isLoading, items, refetch } = useProjectDetails(routeId);
   const activity = useProjectActivities(routeId);
+  const { table, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
+    useProjectsTable({
+      root: false,
+      parent: routeId,
+    });
 
   return (
     <>
@@ -78,6 +89,21 @@ export default function ProjectDetailsPage({ params }: Props) {
           items={items}
           refetch={refetch}
         />
+
+        {hasData && (
+          <>
+            <p>Packages</p>
+            <ProjectsTable
+              table={table}
+              page={page}
+              totalPages={totalPages}
+              canPrev={canPrev}
+              canNext={canNext}
+              nextPage={nextPage}
+              prevPage={prevPage}
+            />
+          </>
+        )}
       </div>
     </>
   );

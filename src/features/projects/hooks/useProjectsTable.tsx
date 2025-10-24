@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper, getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash2Icon, Loader2 } from 'lucide-react';
 
@@ -18,27 +18,39 @@ import { formatDuration } from '@/lib/utils/time';
 
 import type { ProjectType } from '../lib/types';
 
-import { useProjectsQuery } from './useProjectsQuery';
+import { useProjectsQuery, GetProjectsParams } from './useProjectsQuery';
 import { useFavoriteMutation } from './useFavoriteMutation';
 
 const columnHelper = createColumnHelper<ProjectType>();
 
 const formatDate = (iso?: string) => (iso ? dayjs(iso).format('DD MMM YYYY') : '');
 
-export type UseProjectsTableOptions = {
-  page?: number;
-  limit?: number;
-  root?: boolean;
+export type UseProjectsTableResult = {
+  table: Table<ProjectType>;
+  isLoading: boolean;
+  isFetching: boolean;
+  hasData: boolean;
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  canPrev: boolean;
+  canNext: boolean;
+  nextPage: () => void;
+  prevPage: () => void;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setLimit: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
+export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTableResult => {
   const [page, setPage] = useState<number>(options.page ?? 1);
   const [limit, setLimit] = useState<number>(options.limit ?? 12);
 
   const { data, isLoading, isFetching, refetch } = useProjectsQuery({
     page,
     limit,
-    root: true,
+    root: options.root ?? true,
+    parent: options.parent,
   });
 
   const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
@@ -49,7 +61,9 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
     columnHelper.display({
       id: 'index',
       cell: (info) => (
-        <div className="font-bold text-muted-foreground pl-2">{info.row.index + 1}</div>
+        <div className="font-bold text-muted-foreground pl-2">
+          {(page - 1) * limit + info.row.index + 1}
+        </div>
       ),
     }),
     columnHelper.accessor('name', {
@@ -84,53 +98,55 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
         const id = project._id;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                size="icon"
-              >
-                <EllipsisVertical />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-40" side="left">
-              <Link href={`/dashboard/projects/show/${id}`}>
-                <DropdownMenuItem>
-                  <Eye />
-                  Show
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                  size="icon"
+                >
+                  <EllipsisVertical />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-40" side="left">
+                <Link href={`/dashboard/projects/show/${id}`}>
+                  <DropdownMenuItem>
+                    <Eye />
+                    Show
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={`/dashboard/projects/edit/${id}`}>
+                  <DropdownMenuItem>
+                    <Pencil />
+                    Edit
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  disabled={pendingFavoriteId === id}
+                  onClick={() => toggleFavorite({ id, isFavorite: project.is_favorite })}
+                >
+                  {pendingFavoriteId === id ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
+                  )}
+                  Favorite
                 </DropdownMenuItem>
-              </Link>
-              <Link href={`/dashboard/projects/edit/${id}`}>
                 <DropdownMenuItem>
-                  <Pencil />
-                  Edit
+                  <Archive />
+                  Archive
                 </DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                disabled={pendingFavoriteId === id}
-                onClick={() => toggleFavorite({ id, isFavorite: project.is_favorite })}
-              >
-                {pendingFavoriteId === id ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
-                )}
-                Favorite
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Archive />
-                Archive
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">
-                <Trash2Icon className="text-destructive" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive">
+                  <Trash2Icon className="text-destructive" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     }),

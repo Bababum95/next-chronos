@@ -8,20 +8,22 @@ export type GetProjectsParams = {
   page?: number;
   limit?: number;
   root?: boolean | string;
+  parent?: string;
 };
 
 export const useProjectsQuery = (params: GetProjectsParams = {}) => {
-  const searchParams = new URLSearchParams();
-  if (typeof params.page !== 'undefined') searchParams.set('page', String(params.page));
-  if (typeof params.limit !== 'undefined') searchParams.set('limit', String(params.limit));
-  if (typeof params.root !== 'undefined') searchParams.set('root', String(params.root));
+  const searchParams = new URLSearchParams(
+    Object.entries(params)
+      .filter(([, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => [key, String(value)])
+  );
 
-  const url = `/projects${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  const queryString = searchParams.toString();
+  const url = `/projects${queryString ? `?${queryString}` : ''}`;
 
   return useQuery<ProjectsApiResponse>({
     queryKey: [url],
-    // Preserve previous data while fetching the next page for better UX
-    placeholderData: (previousData) => previousData,
+    placeholderData: (prev) => prev,
     staleTime: env.intervalSec * 1000,
   });
 };

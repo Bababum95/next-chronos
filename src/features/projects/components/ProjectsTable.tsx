@@ -1,7 +1,8 @@
 'use client';
 
-import { flexRender } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, FolderOpen } from 'lucide-react';
+import { flexRender, Table as TanstackTable } from '@tanstack/react-table';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import type { FC } from 'react';
 
 import {
   Table,
@@ -12,46 +13,28 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
 
-import { useProjectsTable } from '../hooks/useProjectsTable';
+import type { ProjectType } from '../lib/types';
 
-import { ProjectLoadingCard } from './ProjectLoadingCard';
+type Props = {
+  table: TanstackTable<ProjectType>;
+  page?: number;
+  totalPages?: number;
+  canPrev?: boolean;
+  canNext?: boolean;
+  nextPage?: () => void;
+  prevPage?: () => void;
+};
 
-export function ProjectsTable() {
-  const { table, isLoading, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
-    useProjectsTable();
-
-  if (isLoading) return <ProjectLoadingCard />;
-
-  if (!hasData) {
-    return (
-      <Empty className="rounded-md border">
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <FolderOpen />
-          </EmptyMedia>
-          <EmptyTitle>No Projects Yet</EmptyTitle>
-          <EmptyDescription>
-            You haven&apos;t created any projects yet. Get started by creating your first project.
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <div className="flex gap-2">
-            <Button>Create Project</Button>
-          </div>
-        </EmptyContent>
-      </Empty>
-    );
-  }
-
+export const ProjectsTable: FC<Props> = ({
+  table,
+  page,
+  totalPages,
+  canPrev,
+  canNext,
+  nextPage,
+  prevPage,
+}) => {
   return (
     <>
       <div className="rounded-md border overflow-hidden">
@@ -82,33 +65,37 @@ export function ProjectsTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="text-muted-foreground flex-1 text-sm flex">
-          Page {page} of {totalPages}
+      {totalPages && (
+        <div className="flex items-center justify-between">
+          <div className="text-muted-foreground flex-1 text-sm flex">
+            Page {page} of {totalPages}
+          </div>
+          {totalPages > 1 && (
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Button
+                variant="outline"
+                className="size-8"
+                size="icon"
+                onClick={prevPage}
+                disabled={!canPrev}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft />
+              </Button>
+              <Button
+                variant="outline"
+                className="size-8"
+                size="icon"
+                onClick={nextPage}
+                disabled={!canNext}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight />
+              </Button>
+            </div>
+          )}
         </div>
-        <div className="ml-auto flex items-center gap-2 lg:ml-0">
-          <Button
-            variant="outline"
-            className="size-8"
-            size="icon"
-            onClick={prevPage}
-            disabled={!canPrev}
-          >
-            <span className="sr-only">Go to previous page</span>
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            className="size-8"
-            size="icon"
-            onClick={nextPage}
-            disabled={!canNext}
-          >
-            <span className="sr-only">Go to next page</span>
-            <ChevronRight />
-          </Button>
-        </div>
-      </div>
+      )}
     </>
   );
-}
+};

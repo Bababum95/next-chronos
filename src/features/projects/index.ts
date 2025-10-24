@@ -3,6 +3,7 @@ export { ProjectLoadingCard } from './components/ProjectLoadingCard';
 export { ProjectDetails } from './components/ProjectDetails';
 export { ProjectForm } from './components/ProjectForm';
 
+export { useProjectsTable } from './hooks/useProjectsTable';
 export { useProjectDetails } from './hooks/useProjectDetails';
 export { useEditProject } from './hooks/useEditProject';
 export { useProjectActivities } from './hooks/useProjectActivities';
