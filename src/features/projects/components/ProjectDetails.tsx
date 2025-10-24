@@ -69,7 +69,9 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
       <Card>
         <CardHeader>
           <CardTitle className="text-xl">{project.name}</CardTitle>
-          <CardDescription>Project overview and metadata</CardDescription>
+          <CardDescription>
+            {project.description ?? 'Project overview and metadata'}
+          </CardDescription>
           <CardAction>
             <Button
               variant="secondary"
