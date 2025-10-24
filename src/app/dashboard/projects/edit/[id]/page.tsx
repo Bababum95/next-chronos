@@ -1,6 +1,7 @@
 'use client';
 
 import { use } from 'react';
+import { RotateCcw } from 'lucide-react';
 
 import { Header } from '@/components/layouts/Header';
 import { ProjectForm, useEditProject } from '@/features/projects';
@@ -15,7 +16,7 @@ export default function ProjectEditPage({ params }: Props) {
   const resolvedParams = use(params);
   const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
-  const { initialState, isLoading, onSubmit, values, updateField, isPending, onSave } =
+  const { initialState, isLoading, onSubmit, values, updateField, isPending, onSave, resetForm } =
     useEditProject(routeId);
 
   return (
@@ -31,6 +32,12 @@ export default function ProjectEditPage({ params }: Props) {
             },
           ],
         }}
+        extra={
+          <Button variant="outline" onClick={resetForm}>
+            <RotateCcw />
+            Reset
+          </Button>
+        }
       />
       <div className="px-4 py-4">
         <Card className="pt-0 gap-4 pb-4">

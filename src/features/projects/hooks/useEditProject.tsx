@@ -7,7 +7,20 @@ import { toast } from 'sonner';
 import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import { pick } from '@/lib/utils';
 
-import type { ProjectApiResponse, ProjectFormData } from '../lib/types';
+import type { ProjectApiResponse, ProjectFormData, ProjectType } from '../lib/types';
+
+const cleanData = (data: ProjectType) => {
+  return pick(data, [
+    'name',
+    'description',
+    'project_folder',
+    'git_branches',
+    'alternate_project',
+    'is_favorite',
+    'is_archived',
+    'parent',
+  ]);
+};
 
 export const useEditProject = (id?: string) => {
   const [values, setValues] = useState<ProjectFormData>({});
@@ -36,23 +49,19 @@ export const useEditProject = (id?: string) => {
 
   useEffect(() => {
     if (data?.data) {
-      const cleanData = pick(data.data, [
-        'name',
-        'description',
-        'project_folder',
-        'git_branches',
-        'alternate_project',
-        'is_favorite',
-        'is_archived',
-        'parent',
-      ]);
-      setValues(cleanData);
+      setValues(cleanData(data.data));
     }
   }, [data?.data]);
 
   const updateField = useCallback((field: keyof ProjectFormData, value: string | null) => {
     setValues((prev) => ({ ...prev, [field]: value }));
   }, []);
+
+  const resetForm = useCallback(() => {
+    const newData = data?.data ? cleanData(data.data) : {};
+
+    setValues(newData);
+  }, [data?.data, setValues]);
 
   return {
     isLoading,
@@ -62,5 +71,6 @@ export const useEditProject = (id?: string) => {
     onSave,
     initialState: data?.data,
     onSubmit: handleSubmit,
+    resetForm,
   };
 };

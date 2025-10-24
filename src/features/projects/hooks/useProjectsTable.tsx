@@ -2,7 +2,7 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash, Loader2 } from 'lucide-react';
+import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash2Icon, Loader2 } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -126,7 +126,7 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive">
-                <Trash className="text-destructive" />
+                <Trash2Icon className="text-destructive" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

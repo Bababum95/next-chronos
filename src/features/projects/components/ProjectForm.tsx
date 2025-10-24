@@ -20,7 +20,7 @@ export const ProjectForm: FC<Props> = ({ isLoading, onSubmit, values, updateFiel
   if (isLoading) return <ProjectLoadingCard border={false} />;
 
   return (
-    <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormField
         id="name"
         label="Project Name"
@@ -40,7 +40,7 @@ export const ProjectForm: FC<Props> = ({ isLoading, onSubmit, values, updateFiel
         label="Parent project"
       />
       <TextareaFormField
-        wrapperClassName="col-span-2"
+        wrapperClassName="md:col-span-2"
         id="description"
         label="Description"
         placeholder="Enter project description"
