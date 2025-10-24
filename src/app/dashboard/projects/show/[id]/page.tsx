@@ -1,12 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { SquarePen } from 'lucide-react';
 import { use } from 'react';
 
 import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
-import { ProjectDetails } from '@/features/projects/components/ProjectDetails';
-import { useProjectDetails, useProjectActivities } from '@/features/projects';
+import { useProjectDetails, useProjectActivities, ProjectDetails } from '@/features/projects';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -27,10 +27,12 @@ export default function ProjectDetailsPage({ params }: Props) {
           links: [{ label: 'Projects', href: '/dashboard/projects' }],
         }}
         extra={
-          <Button size="sm">
-            <SquarePen size={14} />
-            Edit
-          </Button>
+          <Link href={`/dashboard/projects/edit/${routeId}`}>
+            <Button size="sm">
+              <SquarePen size={14} />
+              Edit
+            </Button>
+          </Link>
         }
       />
       <div className="px-4 py-4 grid gap-4">

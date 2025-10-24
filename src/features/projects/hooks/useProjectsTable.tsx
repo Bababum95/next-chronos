@@ -102,10 +102,12 @@ export const useProjectsTable = (options: UseProjectsTableOptions = {}) => {
                   Show
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem>
-                <Pencil />
-                Edit
-              </DropdownMenuItem>
+              <Link href={`/dashboard/projects/edit/${id}`}>
+                <DropdownMenuItem>
+                  <Pencil />
+                  Edit
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 disabled={pendingFavoriteId === id}

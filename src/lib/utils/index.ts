@@ -1,5 +1,7 @@
 export { cn } from './cn';
 
+export { pick } from './pick';
+
 // Time utilities
 export { toHourEnd, toHourStart, formatPeriod, formatDate } from './time';
 

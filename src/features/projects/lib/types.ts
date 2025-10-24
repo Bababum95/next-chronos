@@ -12,6 +12,7 @@ export type ProjectType = {
   user: string;
   name: string;
   description?: string;
+  parent?: string;
   project_folder: string;
   git_branches?: string[];
   alternate_project?: string;
@@ -30,7 +31,9 @@ export type ActivityData = {
   range: TimeRangeItem;
 };
 
-export type ProjectFormData = Partial<ProjectType>;
+export type ProjectFormData = Partial<
+  Omit<ProjectType, '_id' | 'user' | 'createdAt' | 'updatedAt' | 'total_time_spent'>
+>;
 export type ProjectApiResponse = ApiResponse<ProjectType>;
 export type ProjectsApiResponse = ApiResponse<{
   items: ProjectType[];
