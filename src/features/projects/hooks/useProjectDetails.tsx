@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { formatDuration } from '@/lib/utils/time';
 import { env } from '@/config';
 
-import type { ProjectApiResponse } from '../lib/types';
+import type { ProjectApiResponse, ProjectDetailItem } from '../lib/types';
 
 export const useProjectDetails = (id?: string) => {
   const { data, isLoading, refetch } = useQuery<ProjectApiResponse>({
@@ -18,12 +18,7 @@ export const useProjectDetails = (id?: string) => {
   const items = useMemo(() => {
     const project = data?.data;
 
-    return [
-      {
-        icon: <Folder />,
-        description: 'Project folder',
-        value: project?.project_folder,
-      },
+    const itemsList: ProjectDetailItem[] = [
       {
         icon: <Folder />,
         description: 'Alternate project',
@@ -39,7 +34,25 @@ export const useProjectDetails = (id?: string) => {
         description: 'Created',
         value: project?.createdAt ? dayjs(project.createdAt).format('DD MMM YYYY') : '',
       },
+      {
+        icon: <Folder />,
+        description: 'Project folder',
+        value: project?.project_folder,
+      },
     ];
+
+    const parent = data?.data?.parent;
+
+    if (parent) {
+      itemsList.push({
+        icon: <Folder />,
+        description: 'Root project',
+        value: parent.name,
+        url: `/dashboard/projects/show/${parent._id}`,
+      });
+    }
+
+    return itemsList;
   }, [data]);
 
   return { project: data?.data, isLoading, items, refetch };

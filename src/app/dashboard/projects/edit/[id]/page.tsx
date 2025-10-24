@@ -33,7 +33,7 @@ export default function ProjectEditPage({ params }: Props) {
           ],
         }}
         extra={
-          <Button variant="outline" onClick={resetForm}>
+          <Button variant="outline" onClick={resetForm} size="sm">
             <RotateCcw />
             Reset
           </Button>

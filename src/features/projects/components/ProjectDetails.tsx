@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2, Folder, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import type { QueryObserverResult } from '@tanstack/react-query';
 
@@ -25,25 +26,28 @@ import { ChartArea } from '@/components/ui/chart-area';
 import { TimeRangeSelector } from '@/features/time-range';
 import { TooltipLite } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 import { useFavoriteMutation } from '../hooks/useFavoriteMutation';
-import type { ActivityData, ProjectType, ProjectApiResponse } from '../lib/types';
+import type {
+  ActivityData,
+  ProjectDetailsType,
+  ProjectApiResponse,
+  ProjectDetailItem,
+} from '../lib/types';
 
 import { ProjectLoadingCard } from './ProjectLoadingCard';
 
 type Props = {
-  project?: ProjectType;
+  project?: ProjectDetailsType;
   isLoading?: boolean;
   activity: ActivityData;
   refetch: () => Promise<QueryObserverResult<ProjectApiResponse, Error>>;
-  items: {
-    icon: React.ReactNode;
-    description: string;
-    value?: string;
-  }[];
+  items: ProjectDetailItem[];
 };
 
 export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items, refetch }) => {
+  const router = useRouter();
   const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
     onSuccess: async () => await refetch(),
   });
@@ -89,8 +93,18 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
         </CardHeader>
       </Card>
       <ItemGroup className="flex-row flex-wrap gap-2">
-        {items.map(({ icon, description, value }) => (
-          <Item key={description} variant="outline" className="flex-1 min-w-[320px]">
+        {items.map(({ icon, description, value, url }) => (
+          <Item
+            key={description}
+            variant="outline"
+            className={cn(
+              'flex-1 min-w-[320px] transition-all duration-200',
+              url
+                ? 'cursor-pointer hover:bg-muted/50 hover:shadow-sm active:scale-[0.98] active:bg-muted'
+                : 'cursor-default'
+            )}
+            onClick={() => url && router.push(url)}
+          >
             <ItemMedia variant="icon">{icon}</ItemMedia>
             <ItemContent className="gap-0">
               <ItemDescription>{description}</ItemDescription>

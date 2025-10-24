@@ -31,10 +31,24 @@ export type ActivityData = {
   range: TimeRangeItem;
 };
 
+export type ProjectDetailsType = ProjectType & {
+  parent?: {
+    _id: string;
+    name: string;
+  };
+};
+
+export type ProjectDetailItem = {
+  icon: React.ReactNode;
+  description: string;
+  value?: string | number | null;
+  url?: string;
+};
+
 export type ProjectFormData = Partial<
   Omit<ProjectType, '_id' | 'user' | 'createdAt' | 'updatedAt' | 'total_time_spent'>
 >;
-export type ProjectApiResponse = ApiResponse<ProjectType>;
+export type ProjectApiResponse = ApiResponse<ProjectDetailsType>;
 export type ProjectsApiResponse = ApiResponse<{
   items: ProjectType[];
   total: number;
