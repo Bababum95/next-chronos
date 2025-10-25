@@ -4,6 +4,7 @@ import { CirclePlus } from 'lucide-react';
 
 import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/lib/hooks/useUser';
 import { EditProfileDialog, ChangePasswordDialog, ApiKeyCard } from '@/features/account';
@@ -19,10 +20,10 @@ export default function Account() {
       <Header
         breadcrumb={{ current: 'Account' }}
         extra={
-          <div className="flex gap-2">
+          <ButtonGroup>
             <EditProfileDialog />
             <ChangePasswordDialog />
-          </div>
+          </ButtonGroup>
         }
       />
       <div className="px-4 py-4 grid gap-4">

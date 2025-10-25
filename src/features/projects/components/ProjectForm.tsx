@@ -33,7 +33,7 @@ export const ProjectForm: FC<Props> = ({ isLoading, onSubmit, values, updateFiel
       />
       <ResourceSelect
         resource="projects"
-        placeholder="Root project"
+        placeholder="Select a parent project"
         value={values.parent ?? ''}
         onChange={(value) => updateField('parent', value)}
         filter={[projectId]}

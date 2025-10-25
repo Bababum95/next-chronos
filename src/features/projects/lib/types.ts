@@ -31,7 +31,7 @@ export type ActivityData = {
   range: TimeRangeItem;
 };
 
-export type ProjectDetailsType = ProjectType & {
+export type ProjectDetailsType = Omit<ProjectType, 'parent'> & {
   parent?: {
     _id: string;
     name: string;

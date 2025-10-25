@@ -7,10 +7,10 @@ import { toast } from 'sonner';
 import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import { pick } from '@/lib/utils';
 
-import type { ProjectApiResponse, ProjectFormData, ProjectType } from '../lib/types';
+import type { ProjectApiResponse, ProjectFormData, ProjectDetailsType } from '../lib/types';
 
-const cleanData = (data: ProjectType) => {
-  return pick(data, [
+const cleanData = (data: ProjectDetailsType) => {
+  const output = pick(data, [
     'name',
     'description',
     'project_folder',
@@ -20,6 +20,11 @@ const cleanData = (data: ProjectType) => {
     'is_archived',
     'parent',
   ]);
+
+  return {
+    ...output,
+    parent: output.parent?._id,
+  };
 };
 
 export const useEditProject = (id?: string) => {

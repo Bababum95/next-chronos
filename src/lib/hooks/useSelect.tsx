@@ -15,15 +15,16 @@ type SelectApiResponse = ApiResponse<{
 type Props = {
   resource: string;
   filter?: string[];
+  value?: string;
 };
 
-export const useSelect = ({ resource, filter }: Props) => {
+export const useSelect = ({ resource, filter, value }: Props) => {
   const { isLoading, data } = useQuery<SelectApiResponse>({
     queryKey: [`/${resource}/select`],
   });
 
   return {
     isLoading,
-    options: data?.data?.items?.filter(({ value }) => !filter?.includes(value)) ?? [],
+    options: data?.data?.items.filter(({ value }) => !filter?.includes(value)) ?? [],
   };
 };
