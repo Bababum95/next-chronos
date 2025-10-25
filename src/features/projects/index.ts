@@ -8,5 +8,6 @@ export { useProjectDetails } from './hooks/useProjectDetails';
 export { useEditProject } from './hooks/useEditProject';
 export { useProjectActivities } from './hooks/useProjectActivities';
 export { useDelete } from './hooks/useDelete';
+export { useArchive } from './hooks/useArchive';
 
 export type { ProjectType } from './lib/types';

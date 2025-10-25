@@ -22,6 +22,7 @@ import type { ProjectType } from '../lib/types';
 import { useProjectsQuery, GetProjectsParams } from './useProjectsQuery';
 import { useFavoriteMutation } from './useFavoriteMutation';
 import { useDelete } from './useDelete';
+import { useArchive } from './useArchive';
 
 const columnHelper = createColumnHelper<ProjectType>();
 
@@ -53,12 +54,16 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
     limit,
     root: options.root ?? true,
     parent: options.parent,
+    includeArchived: false,
   });
 
   const { onDelete, deletingId } = useDelete({
     onSuccess: async () => await refetch(),
   });
   const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
+    onSuccess: async () => await refetch(),
+  });
+  const { toggleArchive, pendingArchiveId } = useArchive({
     onSuccess: async () => await refetch(),
   });
 
@@ -140,9 +145,12 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
                   )}
                   Favorite
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Archive />
-                  Archive
+                <DropdownMenuItem
+                  onClick={() => toggleArchive({ id, isArchived: project.is_archived })}
+                  disabled={pendingArchiveId === id}
+                >
+                  {pendingArchiveId === id ? <Spinner /> : <Archive />}
+                  {project.is_archived ? 'Unarchive' : 'Archive'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete({ id })}>

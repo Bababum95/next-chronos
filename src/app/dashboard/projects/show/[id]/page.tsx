@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArchiveIcon, ClockIcon, MoreHorizontalIcon, SquarePen, Trash2Icon } from 'lucide-react';
+import { Archive, ClockIcon, MoreHorizontalIcon, SquarePen, Trash2Icon } from 'lucide-react';
 import { use } from 'react';
 
 import { Header } from '@/components/layouts/Header';
@@ -13,6 +13,7 @@ import {
   useProjectsTable,
   ProjectsTable,
   useDelete,
+  useArchive,
 } from '@/features/projects';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
@@ -36,6 +37,9 @@ export default function ProjectDetailsPage({ params }: Props) {
   const { project, isLoading, items, refetch } = useProjectDetails(routeId);
   const { onDelete, deletingId } = useDelete({
     onSuccess: async () => router.push('/dashboard/projects'),
+  });
+  const { toggleArchive, pendingArchiveId } = useArchive({
+    onSuccess: async () => await refetch(),
   });
   const activity = useProjectActivities(routeId);
   const { table, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
@@ -68,11 +72,14 @@ export default function ProjectDetailsPage({ params }: Props) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <ArchiveIcon />
-                  Archive
+                <DropdownMenuItem
+                  onClick={() => toggleArchive({ id: routeId, isArchived: project?.is_archived })}
+                  disabled={pendingArchiveId === routeId}
+                >
+                  {pendingArchiveId === routeId ? <Spinner /> : <Archive />}
+                  {project?.is_archived ? 'Unarchive' : 'Archive'}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem disabled>
                   <ClockIcon />
                   Snooze
                 </DropdownMenuItem>

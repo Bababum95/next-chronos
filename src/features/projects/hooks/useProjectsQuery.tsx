@@ -9,6 +9,7 @@ export type GetProjectsParams = {
   limit?: number;
   root?: boolean | string;
   parent?: string;
+  includeArchived?: boolean;
 };
 
 export const useProjectsQuery = (params: GetProjectsParams = {}) => {
