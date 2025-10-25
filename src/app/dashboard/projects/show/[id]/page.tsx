@@ -12,6 +12,7 @@ import {
   ProjectDetails,
   useProjectsTable,
   ProjectsTable,
+  useDelete,
 } from '@/features/projects';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
@@ -21,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -32,6 +34,9 @@ export default function ProjectDetailsPage({ params }: Props) {
   const routeId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
   const { project, isLoading, items, refetch } = useProjectDetails(routeId);
+  const { onDelete, deletingId } = useDelete({
+    onSuccess: async () => router.push('/dashboard/projects'),
+  });
   const activity = useProjectActivities(routeId);
   const { table, hasData, page, totalPages, nextPage, prevPage, canNext, canPrev } =
     useProjectsTable({
@@ -72,8 +77,12 @@ export default function ProjectDetailsPage({ params }: Props) {
                   Snooze
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                  <Trash2Icon className="text-destructive" />
+                <DropdownMenuItem variant="destructive" onClick={() => onDelete({ id: routeId })}>
+                  {deletingId === routeId ? (
+                    <Spinner className="text-destructive" />
+                  ) : (
+                    <Trash2Icon className="text-destructive" />
+                  )}
                   Trash
                 </DropdownMenuItem>
               </DropdownMenuContent>

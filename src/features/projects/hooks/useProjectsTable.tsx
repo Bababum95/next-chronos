@@ -2,7 +2,7 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash2Icon, Loader2 } from 'lucide-react';
+import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash2Icon } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -15,11 +15,13 @@ import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils/time';
+import { Spinner } from '@/components/ui/spinner';
 
 import type { ProjectType } from '../lib/types';
 
 import { useProjectsQuery, GetProjectsParams } from './useProjectsQuery';
 import { useFavoriteMutation } from './useFavoriteMutation';
+import { useDelete } from './useDelete';
 
 const columnHelper = createColumnHelper<ProjectType>();
 
@@ -53,6 +55,9 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
     parent: options.parent,
   });
 
+  const { onDelete, deletingId } = useDelete({
+    onSuccess: async () => await refetch(),
+  });
   const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
     onSuccess: async () => await refetch(),
   });
@@ -129,7 +134,7 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
                   onClick={() => toggleFavorite({ id, isFavorite: project.is_favorite })}
                 >
                   {pendingFavoriteId === id ? (
-                    <Loader2 className="animate-spin" />
+                    <Spinner />
                   ) : (
                     <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
                   )}
@@ -140,8 +145,12 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
                   Archive
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                  <Trash2Icon className="text-destructive" />
+                <DropdownMenuItem variant="destructive" onClick={() => onDelete({ id })}>
+                  {deletingId === id ? (
+                    <Spinner className="text-destructive" />
+                  ) : (
+                    <Trash2Icon className="text-destructive" />
+                  )}
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

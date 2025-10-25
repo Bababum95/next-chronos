@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, Folder, Star } from 'lucide-react';
+import { Folder, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import type { QueryObserverResult } from '@tanstack/react-query';
@@ -27,6 +27,7 @@ import { TimeRangeSelector } from '@/features/time-range';
 import { TooltipLite } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Spinner } from '@/components/ui/spinner';
 
 import { useFavoriteMutation } from '../hooks/useFavoriteMutation';
 import type {
@@ -84,7 +85,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
               disabled={pendingFavoriteId === project._id}
             >
               {pendingFavoriteId === project._id ? (
-                <Loader2 className="animate-spin" />
+                <Spinner />
               ) : (
                 <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
               )}

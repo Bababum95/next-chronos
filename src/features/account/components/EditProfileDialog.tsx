@@ -1,4 +1,4 @@
-import { SquarePen, Upload, X, Loader2 } from 'lucide-react';
+import { SquarePen, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { FormField } from '@/components/forms/FormField';
 import { useEditProfileForm } from '@/features/account/hooks/useEditProfileForm';
 import { useAvatarUpload } from '@/features/account/hooks/useAvatarUpload';
 import { UserAvatar } from '@/entities/user/components/UserAvatar';
+import { Spinner } from '@/components/ui/spinner';
 
 export function EditProfileDialog() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -80,11 +81,7 @@ export function EditProfileDialog() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
                 >
-                  {isUploading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Upload className="h-4 w-4" />
-                  )}
+                  {isUploading ? <Spinner /> : <Upload className="h-4 w-4" />}
                   {isUploading ? 'Uploading...' : 'Set New Photo'}
                 </Button>
                 {avatarUrl && (
@@ -136,15 +133,8 @@ export function EditProfileDialog() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading || isUploading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Saving...
-                </>
-              ) : (
-                'Save changes'
-              )}
+            <Button type="submit" disabled={isLoading || isUploading} isLoading={isLoading}>
+              Save changes
             </Button>
           </DialogFooter>
         </form>

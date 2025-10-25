@@ -1,4 +1,4 @@
-import { KeyRound, Loader2 } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -98,15 +98,8 @@ export function ChangePasswordDialog() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Changing...
-                </>
-              ) : (
-                'Change Password'
-              )}
+            <Button type="submit" disabled={isLoading} isLoading={isLoading}>
+              Change Password
             </Button>
           </DialogFooter>
         </form>
