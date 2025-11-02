@@ -1,25 +1,23 @@
-import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { useTimeRange } from '@/features/time-range';
 import { fetcher } from '@/lib/utils/fetcher';
 import { env } from '@/config';
-import { formatDate, formatPeriod } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import { Activity } from '@/lib/api/types';
 
 import { WORK_ACTIVITY } from '../lib/constants';
+import type { ActivityData } from '../lib/types';
 
-export const useProjectActivities = (id?: string) => {
-  const { range } = useTimeRange();
+export const useProjectActivities = (id?: string): ActivityData => {
+  const { start, range, end, formattedPeriod, offset } = useTimeRange();
 
   const { data } = useQuery({
-    queryKey: ['projects', 'activities', id, range.value],
+    queryKey: ['projects', 'activities', id, range.value, offset],
     enabled: !!id,
     staleTime: env.intervalSec * 1000,
     queryFn: async () => {
-      const start = dayjs().startOf(range.value).unix();
-      const end = dayjs().unix();
       const res = await fetcher({
         queryKey: [`/projects/${id}/activities?start=${start}&end=${end}`],
       });
@@ -52,7 +50,7 @@ export const useProjectActivities = (id?: string) => {
       range,
       totalTimeStr: data.data.totalTimeStr ?? '',
       chartConfig: WORK_ACTIVITY,
-      formattedPeriod: formatPeriod({ start: data?.data?.start, end: data?.data?.end }) ?? '',
+      formattedPeriod,
     };
   }, [data, range.value]);
 

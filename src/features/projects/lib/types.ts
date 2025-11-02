@@ -27,7 +27,7 @@ export type ActivityData = {
   chartData: ChartDataPoint[];
   chartConfig: ChartConfig;
   totalTimeStr: string | null;
-  formattedPeriod: string;
+  formattedPeriod: string | null;
   range: TimeRangeItem;
 };
 

@@ -1,10 +1,9 @@
-import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { env } from '@/config';
 import { fetcher } from '@/lib/utils/fetcher';
-import { formatPeriod, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import { ChartConfig } from '@/components/ui/chart';
 import { useTimeRange } from '@/features/time-range';
 import type { Activity, SummariesRangeResponse } from '@/lib/api/types';
@@ -13,15 +12,13 @@ import { WORK_ACTIVITY } from '../model/constants';
 import type { WorkActivityData } from '../types';
 
 export const useActivityAnalytics = () => {
-  const { range } = useTimeRange();
+  const { start, range, end, formattedPeriod, offset } = useTimeRange();
 
   const { data, isLoading } = useQuery<SummariesRangeResponse>({
-    queryKey: ['/summaries/range', range.value],
+    queryKey: ['/summaries/range', range.value, offset],
     staleTime: env.intervalSec * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const start = dayjs().startOf(range.value).unix();
-      const end = dayjs().unix();
       const res = await fetcher({
         queryKey: [`/summaries/range?start=${start}&end=${end}&full=true`],
       });
@@ -130,8 +127,8 @@ export const useActivityAnalytics = () => {
     isLoading,
     workActivity,
     projectActivity,
+    formattedPeriod,
     timeRange: range,
-    formatedPeriod: formatPeriod({ start: data?.data?.start, end: data?.data?.end }),
     totalTimeStr: data?.data?.totalTimeStr,
   };
 };

@@ -126,7 +126,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
             </TooltipLite>
           </div>
         }
-        extra={<TimeRangeSelector />}
+        extra={<TimeRangeSelector layout="double" />}
         chartData={activity.chartData}
         chartConfig={activity.chartConfig}
         formatValue={formatDuration}

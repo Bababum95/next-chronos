@@ -11,12 +11,12 @@ import { ChartPieDonut } from '@/components/ChartPieDonut';
 import { TimeRangeSelector } from '@/features/time-range';
 
 export default function Dashboard() {
-  const { totalTimeStr, workActivity, isLoading, formatedPeriod, projectActivity, timeRange } =
+  const { totalTimeStr, workActivity, isLoading, formattedPeriod, projectActivity, timeRange } =
     useActivityAnalytics();
   const totalTime = useTotalTimeSummary();
 
-  const period = formatedPeriod ? (
-    <TooltipLite content={formatedPeriod}>
+  const period = formattedPeriod ? (
+    <TooltipLite content={formattedPeriod}>
       <span>{timeRange.label}</span>
     </TooltipLite>
   ) : (
@@ -50,7 +50,7 @@ export default function Dashboard() {
             <CardHeader className="items-center pb-0">
               <CardTitle>Time Spent by Projects</CardTitle>
               <CardDescription>
-                {isLoading ? <Skeleton className="w-[180px] h-5" /> : formatedPeriod}
+                {isLoading ? <Skeleton className="w-[180px] h-5" /> : formattedPeriod}
               </CardDescription>
             </CardHeader>
             <CardContent>

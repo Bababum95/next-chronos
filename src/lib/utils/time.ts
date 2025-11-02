@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+import type { TimeRangeItem } from '@/features/time-range/lib/types';
+
 export const normalizeTimestamp = (timestamp: number): number => {
   // If the absolute value is bigger than ~1e11 treat it as milliseconds.
   // (Unix seconds around 1e9 — timestamps in ms are ~1e12)
@@ -52,11 +54,48 @@ export const formatPeriod = ({ start, end }: { start?: number; end?: number } = 
   const startDate = dayjs.unix(start);
   const endDate = dayjs.unix(end);
 
-  return `${startDate.format('MMM D HH:mm')} - ${endDate.format('MMM D HH:mm')}`;
+  return `${startDate.format('DD MMM HH:mm')} - ${endDate.format('DD MMM HH:mm')}`;
 };
 
 export const formatDate = (timeRange: string, date?: number) => {
   if (typeof date !== 'number') return '';
 
   return dayjs.unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
+};
+
+/**
+ * Calculate the start and end timestamps for the given time range and offset.
+ *
+ * @param {TimeRangeItem} range - The currently selected time range.
+ * @param {number} offset - The offset to shift the range.
+ * @returns {{ start: number, end: number }} The computed start and end Unix timestamps.
+ */
+export const calculateRange = (range: TimeRangeItem, offset: number) => {
+  const now = dayjs();
+
+  const isIsoWeek = range.value === 'isoWeek';
+
+  const start = isIsoWeek
+    ? now
+        .startOf('isoWeek')
+        .add(offset * 7, 'day')
+        .unix()
+    : now
+        .startOf(range.value as dayjs.ManipulateType)
+        .add(offset, range.value as dayjs.ManipulateType)
+        .unix();
+
+  const rawEnd = isIsoWeek
+    ? now
+        .endOf('isoWeek')
+        .add(offset * 7, 'day')
+        .unix()
+    : now
+        .endOf(range.value as dayjs.ManipulateType)
+        .add(offset, range.value as dayjs.ManipulateType)
+        .unix();
+
+  const end = Math.min(rawEnd, now.unix());
+
+  return { start, end };
 };
