@@ -141,7 +141,10 @@ export const useProjectsTable = (options: GetProjectsParams = {}): UseProjectsTa
                   {pendingFavoriteId === id ? (
                     <Spinner />
                   ) : (
-                    <Star fill={project.is_favorite ? 'currentColor' : 'none'} />
+                    <Star
+                      fill={project.is_favorite ? '#e3b341' : 'none'}
+                      stroke={project.is_favorite ? '#e3b341' : 'currentColor'}
+                    />
                   )}
                   Favorite
                 </DropdownMenuItem>
