@@ -17,5 +17,18 @@ const config: StorybookConfig = {
     options: {},
   },
   staticDirs: ['../public'],
+  env: (config) => ({
+    ...config,
+    STORYBOOK: 'true',
+  }),
+  viteFinal: async (config) => {
+    // Ensure STORYBOOK is available in both process.env and import.meta.env
+    config.define = {
+      ...config.define,
+      'process.env.STORYBOOK': JSON.stringify('true'),
+      'import.meta.env.STORYBOOK': JSON.stringify('true'),
+    };
+    return config;
+  },
 };
 export default config;

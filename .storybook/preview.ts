@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/nextjs-vite';
 import React, { useEffect } from 'react';
 import '../src/app/globals.css';
 
-// Set Storybook environment variable
+// Set Storybook environment variable for both Node and browser environments
 if (typeof process !== 'undefined') {
   process.env.STORYBOOK = 'true';
 }
