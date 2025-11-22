@@ -1,10 +1,7 @@
 import { z } from 'zod';
 
 // Check if running in Storybook environment
-const isStorybook =
-  (typeof process !== 'undefined' && process.env.STORYBOOK === 'true') ||
-  (typeof window !== 'undefined' &&
-    (window as typeof window & { __STORYBOOK__?: boolean }).__STORYBOOK__ === true);
+const isStorybook = process.env.STORYBOOK === 'true';
 
 if (!isStorybook && typeof window === 'undefined') {
   const envSchema = z.object({

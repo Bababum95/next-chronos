@@ -6,10 +6,6 @@ import '../src/app/globals.css';
 if (typeof process !== 'undefined') {
   process.env.STORYBOOK = 'true';
 }
-// Also set global flag for browser environment
-if (typeof window !== 'undefined') {
-  (window as typeof window & { __STORYBOOK__?: boolean }).__STORYBOOK__ = true;
-}
 
 const ThemeDecorator = (Story: () => React.ReactElement, context: any) => {
   const theme = context.globals.theme || 'light';
