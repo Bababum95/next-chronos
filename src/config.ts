@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-if (typeof window === 'undefined') {
+// Check if running in Storybook environment
+const isStorybook =
+  (typeof process !== 'undefined' && process.env.STORYBOOK === 'true') ||
+  (typeof window !== 'undefined' &&
+    (window as typeof window & { __STORYBOOK__?: boolean }).__STORYBOOK__ === true);
+
+if (!isStorybook && typeof window === 'undefined') {
   const envSchema = z.object({
     MONGODB_URI: z.string({ message: 'MONGODB_URI is required' }),
     GOOGLE_CLIENT_ID: z.string({ message: 'GOOGLE_CLIENT_ID is required' }),
@@ -20,11 +26,15 @@ if (typeof window === 'undefined') {
 }
 
 export const env = {
-  mongoUri: process.env.MONGODB_URI as string,
-  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
-  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-  nextauthSecret: process.env.NEXTAUTH_SECRET || '',
-  intervalSec: Number(process.env.NEXT_PUBLIC_INTERVAL_SEC),
+  mongoUri: (isStorybook
+    ? 'mongodb://localhost:27017/storybook'
+    : process.env.MONGODB_URI) as string,
+  googleClientId: isStorybook ? 'storybook-client-id' : process.env.GOOGLE_CLIENT_ID || '',
+  googleClientSecret: isStorybook
+    ? 'storybook-client-secret'
+    : process.env.GOOGLE_CLIENT_SECRET || '',
+  nextauthSecret: isStorybook ? 'storybook-nextauth-secret' : process.env.NEXTAUTH_SECRET || '',
+  intervalSec: isStorybook ? 60 : Number(process.env.NEXT_PUBLIC_INTERVAL_SEC),
   tokenKey: process.env.NEXT_PUBLIC_TOKEN_KEY || 'auth-token',
   apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
 };
