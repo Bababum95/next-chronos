@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { AuthCard, SocialAuthButtons, useLogin } from '@/features/auth';
 import { FormField } from '@/components/forms/FormField';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { AuthCard, SocialAuthButtons, useLogin } from '@/features/auth';
 
 function LoginContent() {
   const { formData, updateField, handleSubmit, state } = useLogin();

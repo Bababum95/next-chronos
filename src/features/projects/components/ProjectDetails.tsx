@@ -1,11 +1,13 @@
 'use client';
 
+import type { QueryObserverResult } from '@tanstack/react-query';
 import { Folder, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
-import type { QueryObserverResult } from '@tanstack/react-query';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardTitle, CardDescription, CardAction, CardHeader } from '@/components/ui/card';
+import { ChartArea } from '@/components/ui/chart-area';
 import {
   Empty,
   EmptyHeader,
@@ -13,7 +15,6 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from '@/components/ui/empty';
-import { formatDuration } from '@/lib/utils/time';
 import {
   Item,
   ItemContent,
@@ -22,13 +23,13 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
-import { ChartArea } from '@/components/ui/chart-area';
-import { TimeRangeSelector } from '@/features/time-range';
-import { TooltipLite } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { Spinner } from '@/components/ui/spinner';
+import { TooltipLite } from '@/components/ui/tooltip';
+import { TimeRangeSelector } from '@/features/time-range';
+import { cn } from '@/lib/utils';
+import { formatDuration } from '@/lib/utils/time';
 
+import { ProjectLoadingCard } from './ProjectLoadingCard';
 import { useFavoriteMutation } from '../hooks/useFavoriteMutation';
 import type {
   ActivityData,
@@ -37,7 +38,6 @@ import type {
   ProjectDetailItem,
 } from '../lib/types';
 
-import { ProjectLoadingCard } from './ProjectLoadingCard';
 
 type Props = {
   project?: ProjectDetailsType;
@@ -63,7 +63,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
             <Folder />
           </EmptyMedia>
           <EmptyTitle>No Project Found</EmptyTitle>
-          <EmptyDescription>We couldn't find the project you were looking for.</EmptyDescription>
+          <EmptyDescription>We couldn&apos;t find the project you were looking for.</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );

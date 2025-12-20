@@ -1,6 +1,6 @@
-import type { ApiResponse } from '@/lib/validation';
 import type { ChartConfig } from '@/components/ui/chart';
 import type { TimeRangeItem } from '@/features/time-range/lib/types';
+import type { ApiResponse } from '@/lib/validation';
 
 export type ChartDataPoint = {
   date: string;

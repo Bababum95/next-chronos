@@ -6,10 +6,10 @@ import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUser } from '@/lib/hooks/useUser';
-import { EditProfileDialog, ChangePasswordDialog, ApiKeyCard } from '@/features/account';
-import { UserAvatar } from '@/entities/user';
 import { TooltipLite } from '@/components/ui/tooltip';
+import { UserAvatar } from '@/entities/user';
+import { EditProfileDialog, ChangePasswordDialog, ApiKeyCard } from '@/features/account';
+import { useUser } from '@/lib/hooks/useUser';
 
 export default function Account() {
   const { user } = useUser();

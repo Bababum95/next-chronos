@@ -90,7 +90,7 @@ UserSchema.statics.findByApiKey = async function (apiKey: string) {
   return { ...user, _id: user._id.toString() };
 };
 
-export interface UserModel extends mongoose.Model<UserDoc, {}, UserMethods> {
+export interface UserModel extends mongoose.Model<UserDoc, object, UserMethods> {
   findByApiKey: (apiKey: string) => Promise<UserDoc | null>;
 }
 

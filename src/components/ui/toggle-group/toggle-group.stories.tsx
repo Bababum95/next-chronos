@@ -1,5 +1,13 @@
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import {
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+} from 'lucide-react';
 
 import { ToggleGroup, ToggleGroupItem } from './toggle-group';
 
@@ -27,7 +35,7 @@ const meta = {
 } satisfies Meta<typeof ToggleGroup>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 export const Single: Story = {
   render: () => (
@@ -136,4 +144,3 @@ export const Disabled: Story = {
     </ToggleGroup>
   ),
 };
-

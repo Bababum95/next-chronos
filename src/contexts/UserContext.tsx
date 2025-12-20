@@ -1,12 +1,12 @@
 'use client';
 
-import { createContext } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { signOut } from 'next-auth/react';
+import { createContext } from 'react';
 
+import type { UserDoc } from '@/lib/mongoose/models/user';
 import { tokenStorage } from '@/lib/utils/auth';
 import { fetcher } from '@/lib/utils/fetcher';
-import type { UserDoc } from '@/lib/mongoose/models/user';
 
 type UserContextType = {
   user?: UserDoc | null;

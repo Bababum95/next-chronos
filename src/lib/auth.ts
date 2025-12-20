@@ -1,13 +1,13 @@
-import GoogleProvider from 'next-auth/providers/google';
 import { cookies } from 'next/headers';
-import { NextAuthOptions } from 'next-auth';
 import type { NextRequest } from 'next/server';
+import { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 
 import { env } from '@/config';
 
 import { dbConnect, User } from './mongoose';
-import { ApiKeySchema, parseOrThrow, ValidationError } from './validation';
 import { UserDoc } from './mongoose/models/user';
+import { ApiKeySchema, parseOrThrow, ValidationError } from './validation';
 
 export const authOptions: NextAuthOptions = {
   providers: [

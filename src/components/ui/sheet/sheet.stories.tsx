@@ -19,12 +19,6 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    side: {
-      control: 'select',
-      options: ['top', 'bottom', 'left', 'right'],
-    },
-  },
 } satisfies Meta<typeof Sheet>;
 
 export default meta;
@@ -40,7 +34,7 @@ export const Default: Story = {
         <SheetHeader>
           <SheetTitle>Edit Profile</SheetTitle>
           <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
@@ -130,11 +124,10 @@ export const WithoutHeader: Story = {
         <div className="py-4">
           <h2 className="text-lg font-semibold mb-2">Simple Sheet</h2>
           <p className="text-sm text-muted-foreground">
-            This sheet doesn't use SheetHeader and SheetDescription components.
+            This sheet doesn&apos;t use SheetHeader and SheetDescription components.
           </p>
         </div>
       </SheetContent>
     </Sheet>
   ),
 };
-

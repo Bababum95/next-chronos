@@ -1,5 +1,5 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Label } from '../label';
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from './native-select';
@@ -59,18 +59,24 @@ export const WithValue: Story = {
   ),
 };
 
+const WithClearComponent = () => {
+  const [value, setValue] = useState('option2');
+  return (
+    <NativeSelect
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onClear={() => setValue('')}
+    >
+      <NativeSelectOption value="">Select...</NativeSelectOption>
+      <NativeSelectOption value="option1">Option 1</NativeSelectOption>
+      <NativeSelectOption value="option2">Option 2</NativeSelectOption>
+      <NativeSelectOption value="option3">Option 3</NativeSelectOption>
+    </NativeSelect>
+  );
+};
+
 export const WithClear: Story = {
-  render: () => {
-    const [value, setValue] = React.useState('option2');
-    return (
-      <NativeSelect value={value} onChange={(e) => setValue(e.target.value)} onClear={() => setValue('')}>
-        <NativeSelectOption value="">Select...</NativeSelectOption>
-        <NativeSelectOption value="option1">Option 1</NativeSelectOption>
-        <NativeSelectOption value="option2">Option 2</NativeSelectOption>
-        <NativeSelectOption value="option3">Option 3</NativeSelectOption>
-      </NativeSelect>
-    );
-  },
+  render: () => <WithClearComponent />,
 };
 
 export const WithOptGroup: Story = {
@@ -123,4 +129,3 @@ export const MultipleOptions: Story = {
     </NativeSelect>
   ),
 };
-

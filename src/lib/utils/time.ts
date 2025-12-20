@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { unix } from 'dayjs';
 
 import type { TimeRangeItem } from '@/features/time-range/lib/types';
 
@@ -51,8 +51,8 @@ export const formatDuration = (seconds: number | string): string => {
 export const formatPeriod = ({ start, end }: { start?: number; end?: number } = {}) => {
   if (!start || !end) return null;
 
-  const startDate = dayjs.unix(start);
-  const endDate = dayjs.unix(end);
+  const startDate = unix(start);
+  const endDate = unix(end);
 
   return `${startDate.format('DD MMM HH:mm')} - ${endDate.format('DD MMM HH:mm')}`;
 };
@@ -60,7 +60,7 @@ export const formatPeriod = ({ start, end }: { start?: number; end?: number } = 
 export const formatDate = (timeRange: string, date?: number) => {
   if (typeof date !== 'number') return '';
 
-  return dayjs.unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
+  return unix(date).format(timeRange === 'day' ? 'HH:mm' : 'DD MMM');
 };
 
 /**

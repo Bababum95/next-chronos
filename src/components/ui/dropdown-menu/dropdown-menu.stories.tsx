@@ -1,5 +1,5 @@
-import { User, Settings, LogOut, Mail, MessageSquare, Plus, MoreHorizontal } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { User, Settings, LogOut, Mail, MessageSquare, Plus, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '../button';
 import {

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 import { Footer } from '@/components/layouts/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { PublicHeader } from '@/components/layouts/PublicHeader';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   return (

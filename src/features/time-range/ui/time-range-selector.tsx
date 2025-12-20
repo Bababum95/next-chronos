@@ -1,10 +1,10 @@
 'use client';
 
-import { FC } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { FC } from 'react';
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
 import { useTimeRange } from '../model/time-range-context';

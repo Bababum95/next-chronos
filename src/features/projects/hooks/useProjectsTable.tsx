@@ -1,9 +1,11 @@
-import Link from 'next/link';
-import dayjs from 'dayjs';
 import { createColumnHelper, getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
-import { useState } from 'react';
+import dayjs from 'dayjs';
 import { Archive, EllipsisVertical, Eye, Pencil, Star, Trash2Icon } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,18 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { TruncatedText } from '@/components/ui/truncated-text';
-import { Badge } from '@/components/ui/badge';
-import { formatDuration } from '@/lib/utils/time';
 import { Spinner } from '@/components/ui/spinner';
+import { TruncatedText } from '@/components/ui/truncated-text';
+import { formatDuration } from '@/lib/utils/time';
 
+import { useArchive } from './useArchive';
+import { useDelete } from './useDelete';
+import { useFavoriteMutation } from './useFavoriteMutation';
+import { useProjectsQuery, GetProjectsParams } from './useProjectsQuery';
 import type { ProjectType } from '../lib/types';
 
-import { useProjectsQuery, GetProjectsParams } from './useProjectsQuery';
-import { useFavoriteMutation } from './useFavoriteMutation';
-import { useDelete } from './useDelete';
-import { useArchive } from './useArchive';
 
 const columnHelper = createColumnHelper<ProjectType>();
 

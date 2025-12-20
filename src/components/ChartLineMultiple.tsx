@@ -1,7 +1,7 @@
 'use client';
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import type { FC, ReactNode } from 'react';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {

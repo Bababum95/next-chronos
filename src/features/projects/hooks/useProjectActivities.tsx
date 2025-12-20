@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useTimeRange } from '@/features/time-range';
-import { fetcher } from '@/lib/utils/fetcher';
 import { env } from '@/config';
-import { formatDate } from '@/lib/utils';
+import { useTimeRange } from '@/features/time-range';
 import { Activity } from '@/lib/api/types';
+import { formatDate } from '@/lib/utils';
+import { fetcher } from '@/lib/utils/fetcher';
 
 import { WORK_ACTIVITY } from '../lib/constants';
 import type { ActivityData } from '../lib/types';

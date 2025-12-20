@@ -1,6 +1,7 @@
 import { SquarePen, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
+import { FormField } from '@/components/forms/FormField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,11 +13,10 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
-import { FormField } from '@/components/forms/FormField';
-import { useEditProfileForm } from '@/features/account/hooks/useEditProfileForm';
-import { useAvatarUpload } from '@/features/account/hooks/useAvatarUpload';
-import { UserAvatar } from '@/entities/user/components/UserAvatar';
 import { Spinner } from '@/components/ui/spinner';
+import { UserAvatar } from '@/entities/user/components/UserAvatar';
+import { useAvatarUpload } from '@/features/account/hooks/useAvatarUpload';
+import { useEditProfileForm } from '@/features/account/hooks/useEditProfileForm';
 
 export function EditProfileDialog() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,7 +65,7 @@ export function EditProfileDialog() {
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

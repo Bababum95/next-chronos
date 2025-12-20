@@ -1,11 +1,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { AppSidebar } from '@/widgets/app-sidebar';
-import { UserProvider } from '@/contexts/UserContext';
-import { getCurrentUser } from '@/lib/auth';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { UserProvider } from '@/contexts/UserContext';
 import { TimeRangeProvider } from '@/features/time-range';
+import { getCurrentUser } from '@/lib/auth';
+import { AppSidebar } from '@/widgets/app-sidebar';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   // Get user data - this will redirect if not authenticated due to middleware

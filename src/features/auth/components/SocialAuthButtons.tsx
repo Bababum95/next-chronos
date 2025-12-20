@@ -1,5 +1,5 @@
-import { FC } from 'react';
 import { signIn } from 'next-auth/react';
+import { FC } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { TooltipLite } from '@/components/ui/tooltip';

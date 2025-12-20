@@ -1,8 +1,8 @@
 import { ChevronDownIcon, XIcon } from 'lucide-react';
 import { FC } from 'react';
 
-import { cn } from '@/lib/utils';
 import { Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/utils';
 
 type NativeSelectProps = React.ComponentProps<'select'> & {
   onClear?: () => void;

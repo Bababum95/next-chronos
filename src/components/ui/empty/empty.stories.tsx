@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FolderOpen, Inbox, Search, FileX } from 'lucide-react';
 
 import { Button } from '../button';
-
 import {
   Empty,
   EmptyContent,

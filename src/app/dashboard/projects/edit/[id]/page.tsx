@@ -1,12 +1,12 @@
 'use client';
 
-import { use } from 'react';
 import { RotateCcw } from 'lucide-react';
+import { use } from 'react';
 
 import { Header } from '@/components/layouts/Header';
-import { ProjectForm, useEditProject } from '@/features/projects';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { ProjectForm, useEditProject } from '@/features/projects';
 
 type Props = {
   params: Promise<{ id: string }>;

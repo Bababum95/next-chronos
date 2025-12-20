@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
-import { Input } from '@/components/ui/input';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'input'> & {
@@ -9,7 +9,7 @@ type Props = React.ComponentProps<'input'> & {
   error?: string;
 };
 
-export const FormField: FC<Props> = ({ id, label, error, required, className, ...props }) => {
+export const FormField: FC<Props> = ({ id, label, error, className, ...props }) => {
   return (
     <Field>
       {label && <FieldLabel htmlFor={id}>{label}</FieldLabel>}

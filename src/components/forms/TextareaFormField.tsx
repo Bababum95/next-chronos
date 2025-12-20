@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
-import { Textarea } from '@/components/ui/textarea';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'textarea'> & {
@@ -14,7 +14,6 @@ export const TextareaFormField: FC<Props> = ({
   id,
   label,
   error,
-  required,
   className,
   wrapperClassName,
   ...props

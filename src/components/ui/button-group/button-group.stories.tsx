@@ -1,5 +1,5 @@
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 
 import { Button } from '../button';
 import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from './button-group';

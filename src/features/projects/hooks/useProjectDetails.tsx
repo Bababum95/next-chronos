@@ -1,10 +1,10 @@
-import dayjs from 'dayjs';
-import { useMemo } from 'react';
-import { Folder, Timer, CalendarDays } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { Folder, Timer, CalendarDays } from 'lucide-react';
+import { useMemo } from 'react';
 
-import { formatDuration } from '@/lib/utils/time';
 import { env } from '@/config';
+import { formatDuration } from '@/lib/utils/time';
 
 import type { ProjectApiResponse, ProjectDetailItem } from '../lib/types';
 

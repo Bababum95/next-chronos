@@ -1,14 +1,14 @@
 'use client';
 
-import { ChartArea } from '@/components/ui/chart-area';
-import { Header } from '@/components/layouts/Header';
-import { formatDuration } from '@/lib/utils/time';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTotalTimeSummary, useActivityAnalytics } from '@/features/dashboard';
-import { TooltipLite } from '@/components/ui/tooltip';
 import { ChartPieDonut } from '@/components/ChartPieDonut';
+import { Header } from '@/components/layouts/Header';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartArea } from '@/components/ui/chart-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { TooltipLite } from '@/components/ui/tooltip';
+import { useTotalTimeSummary, useActivityAnalytics } from '@/features/dashboard';
 import { TimeRangeSelector } from '@/features/time-range';
+import { formatDuration } from '@/lib/utils/time';
 
 export default function Dashboard() {
   const { totalTimeStr, workActivity, isLoading, formattedPeriod, projectActivity, timeRange } =

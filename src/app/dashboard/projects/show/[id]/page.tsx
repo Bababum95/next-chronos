@@ -1,20 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Archive, ClockIcon, MoreHorizontalIcon, SquarePen, Trash2Icon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { use } from 'react';
 
 import { Header } from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
-import {
-  useProjectDetails,
-  useProjectActivities,
-  ProjectDetails,
-  useProjectsTable,
-  ProjectsTable,
-  useDelete,
-  useArchive,
-} from '@/features/projects';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
@@ -24,6 +15,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
+import {
+  useProjectDetails,
+  useProjectActivities,
+  ProjectDetails,
+  useProjectsTable,
+  ProjectsTable,
+  useDelete,
+  useArchive,
+} from '@/features/projects';
 
 type Props = {
   params: Promise<{ id: string }>;

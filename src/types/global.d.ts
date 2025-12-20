@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import type mo from 'mongoose';
 
 declare global {

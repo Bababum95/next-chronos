@@ -4,6 +4,7 @@ import { flexRender, Table as TanstackTable } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { FC } from 'react';
 
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -12,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 
 import type { ProjectType } from '../lib/types';
 

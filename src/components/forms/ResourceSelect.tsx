@@ -2,9 +2,9 @@
 
 import { FC } from 'react';
 
-import { useSelect } from '@/lib/hooks/useSelect';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { useSelect } from '@/lib/hooks/useSelect';
 
 type Props = {
   resource: string;

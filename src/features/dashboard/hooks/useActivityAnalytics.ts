@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { env } from '@/config';
-import { fetcher } from '@/lib/utils/fetcher';
-import { formatDate } from '@/lib/utils';
+
 import { ChartConfig } from '@/components/ui/chart';
+import { env } from '@/config';
 import { useTimeRange } from '@/features/time-range';
 import type { Activity, SummariesRangeResponse } from '@/lib/api/types';
+import { formatDate } from '@/lib/utils';
+import { fetcher } from '@/lib/utils/fetcher';
 
 import { WORK_ACTIVITY } from '../model/constants';
 import type { WorkActivityData } from '../types';
@@ -121,7 +122,7 @@ export const useActivityAnalytics = () => {
       chartData,
       chartConfig,
     };
-  }, [data, range.value]);
+  }, [data]);
 
   return {
     isLoading,

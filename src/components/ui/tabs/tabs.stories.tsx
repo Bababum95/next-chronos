@@ -28,12 +28,12 @@ export const Default: Story = {
       </TabsList>
       <TabsContent value="account">
         <p className="text-sm text-muted-foreground">
-          Make changes to your account here. Click save when you're done.
+          Make changes to your account here. Click save when you&apos;re done.
         </p>
       </TabsContent>
       <TabsContent value="password">
         <p className="text-sm text-muted-foreground">
-          Change your password here. After saving, you'll be logged out.
+          Change your password here. After saving, you&apos;ll be logged out.
         </p>
       </TabsContent>
     </Tabs>
@@ -51,25 +51,19 @@ export const ThreeTabs: Story = {
       <TabsContent value="overview">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Overview</h3>
-          <p className="text-sm text-muted-foreground">
-            This is the overview tab content.
-          </p>
+          <p className="text-sm text-muted-foreground">This is the overview tab content.</p>
         </div>
       </TabsContent>
       <TabsContent value="analytics">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Analytics</h3>
-          <p className="text-sm text-muted-foreground">
-            This is the analytics tab content.
-          </p>
+          <p className="text-sm text-muted-foreground">This is the analytics tab content.</p>
         </div>
       </TabsContent>
       <TabsContent value="reports">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Reports</h3>
-          <p className="text-sm text-muted-foreground">
-            This is the reports tab content.
-          </p>
+          <p className="text-sm text-muted-foreground">This is the reports tab content.</p>
         </div>
       </TabsContent>
     </Tabs>
@@ -167,4 +161,3 @@ export const Vertical: Story = {
     </Tabs>
   ),
 };
-

@@ -1,12 +1,12 @@
 'use client';
 
+import { HomeIcon, ArrowLeftIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { HomeIcon, ArrowLeftIcon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { Footer } from '@/components/layouts/Footer';
 import { PublicHeader } from '@/components/layouts/PublicHeader';
+import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function NotFound() {
             <h1 className="text-9xl font-bold text-muted-foreground/20">404</h1>
             <h2 className="text-3xl font-semibold mb-4">Page Not Found</h2>
             <p className="text-muted-foreground mb-8">
-              Sorry, we couldn't find the page you're looking for. The page might have been moved,
+              Sorry, we couldn&apos;t find the page you&apos;re looking for. The page might have been moved,
               deleted, or you might have entered the wrong URL.
             </p>
           </div>

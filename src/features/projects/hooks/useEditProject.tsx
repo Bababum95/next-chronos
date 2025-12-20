@@ -4,8 +4,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 import { pick } from '@/lib/utils';
+import { createAuthenticatedMutation } from '@/lib/utils/fetcher';
 
 import type { ProjectApiResponse, ProjectFormData, ProjectDetailsType } from '../lib/types';
 

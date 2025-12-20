@@ -1,10 +1,10 @@
-import NextTopLoader from 'nextjs-toploader';
-import { Geist, Geist_Mono } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 
+import { SessionProvider } from '@/components/providers/SessionProvider';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import { SessionProvider } from '@/components/providers/SessionProvider';
 import { QueryProvider } from '@/lib/query-client';
 
 import './globals.css';

@@ -1,9 +1,9 @@
-import { useState, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { authenticatedFetch } from '@/lib/utils/fetcher';
 import { useUser } from '@/lib/hooks/useUser';
+import { authenticatedFetch } from '@/lib/utils/fetcher';
 
 type AvatarUploadState = {
   isUploading: boolean;

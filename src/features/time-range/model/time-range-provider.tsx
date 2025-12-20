@@ -1,17 +1,16 @@
 'use client';
 
-import dayjs from 'dayjs';
+import { extend } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { useState, useCallback, ReactNode, FC, useMemo } from 'react';
 
 import { formatPeriod, calculateRange } from '@/lib/utils/time';
 
+import { TimeRangeContext } from './time-range-context';
 import { TIME_RANGES } from '../lib/constants';
 import type { TimeRangeItem } from '../lib/types';
 
-import { TimeRangeContext } from './time-range-context';
-
-dayjs.extend(isoWeek);
+extend(isoWeek);
 
 /**
  * Props accepted by the TimeRangeProvider component.

@@ -1,6 +1,6 @@
 import { HeartbeatDoc } from '@/lib/mongoose/models/heartbeat';
-import { ApiResponse, ValidationError } from '@/lib/validation';
 import type { UserDoc } from '@/lib/mongoose/models/user';
+import { ApiResponse, ValidationError } from '@/lib/validation';
 
 export type UserResponse = ApiResponse<UserDoc>;
 export type HeartbeatsResponse = ApiResponse<{

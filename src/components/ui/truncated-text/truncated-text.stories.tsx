@@ -35,7 +35,8 @@ export const ShortText: Story = {
 
 export const LongText: Story = {
   args: {
-    children: 'This is a very long text that will definitely be truncated when it exceeds the maximum width',
+    children:
+      'This is a very long text that will definitely be truncated when it exceeds the maximum width',
     maxWidth: 150,
   },
 };
@@ -60,6 +61,9 @@ export const WithPercentage: Story = {
 };
 
 export const InTable: Story = {
+  args: {
+    children: '',
+  },
   render: () => (
     <div className="w-[400px]">
       <table className="w-full border-collapse">
@@ -93,6 +97,9 @@ export const InTable: Story = {
 };
 
 export const MultipleInstances: Story = {
+  args: {
+    children: '',
+  },
   render: () => (
     <div className="space-y-2 w-[300px]">
       <TruncatedText maxWidth={250}>
@@ -101,10 +108,7 @@ export const MultipleInstances: Story = {
       <TruncatedText maxWidth={250}>
         Second item with another long name that will also be truncated
       </TruncatedText>
-      <TruncatedText maxWidth={250}>
-        Third item
-      </TruncatedText>
+      <TruncatedText maxWidth={250}>Third item</TruncatedText>
     </div>
   ),
 };
-

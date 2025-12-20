@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
+import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 

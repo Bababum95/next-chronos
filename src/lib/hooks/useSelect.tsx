@@ -18,7 +18,7 @@ type Props = {
   value?: string;
 };
 
-export const useSelect = ({ resource, filter, value }: Props) => {
+export const useSelect = ({ resource, filter }: Props) => {
   const { isLoading, data } = useQuery<SelectApiResponse>({
     queryKey: [`/${resource}/select`],
   });

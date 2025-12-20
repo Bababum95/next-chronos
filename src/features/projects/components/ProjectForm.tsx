@@ -1,12 +1,12 @@
 import { FC } from 'react';
 
 import { FormField } from '@/components/forms/FormField';
-import { TextareaFormField } from '@/components/forms/TextareaFormField';
 import { ResourceSelect } from '@/components/forms/ResourceSelect';
-
-import { ProjectFormData } from '../lib/types';
+import { TextareaFormField } from '@/components/forms/TextareaFormField';
 
 import { ProjectLoadingCard } from './ProjectLoadingCard';
+import { ProjectFormData } from '../lib/types';
+
 
 type Props = {
   isLoading?: boolean;

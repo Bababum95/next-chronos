@@ -1,6 +1,7 @@
 import { KeyRound } from 'lucide-react';
 import { useState } from 'react';
 
+import { FormField } from '@/components/forms/FormField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
-import { FormField } from '@/components/forms/FormField';
 import { useChangePasswordForm } from '@/features/account/hooks/useChangePasswordForm';
 
 export function ChangePasswordDialog() {

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Pie, PieChart } from 'recharts';
 import { FC, Fragment } from 'react';
+import { Pie, PieChart } from 'recharts';
 
 import {
   ChartConfig,

@@ -19,10 +19,10 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 
+import { NavUser } from './NavUser';
+import { SidebarLogo } from './SidebarLogo';
 import { useSidebarMenu } from '../hooks/useSidebarMenu';
 
-import { SidebarLogo } from './SidebarLogo';
-import { NavUser } from './NavUser';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
