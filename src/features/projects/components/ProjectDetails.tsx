@@ -26,6 +26,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { TooltipLite } from '@/components/ui/tooltip';
 import { TimeRangeSelector } from '@/features/time-range';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/lib/utils/time';
 
@@ -38,7 +39,6 @@ import type {
   ProjectDetailItem,
 } from '../lib/types';
 
-
 type Props = {
   project?: ProjectDetailsType;
   isLoading?: boolean;
@@ -49,6 +49,7 @@ type Props = {
 
 export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items, refetch }) => {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const { toggleFavorite, pendingFavoriteId } = useFavoriteMutation({
     onSuccess: async () => await refetch(),
   });
@@ -63,7 +64,9 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
             <Folder />
           </EmptyMedia>
           <EmptyTitle>No Project Found</EmptyTitle>
-          <EmptyDescription>We couldn&apos;t find the project you were looking for.</EmptyDescription>
+          <EmptyDescription>
+            We couldn&apos;t find the project you were looking for.
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -129,7 +132,7 @@ export const ProjectDetails: FC<Props> = ({ project, isLoading, activity, items,
             </TooltipLite>
           </div>
         }
-        extra={<TimeRangeSelector layout="double" />}
+        extra={<TimeRangeSelector type={isMobile ? 'select' : 'tabs'} />}
         chartData={activity.chartData}
         chartConfig={activity.chartConfig}
         formatValue={formatDuration}
