@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import { Logo } from '@/components/ui/logo';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 
 export const SidebarLogo = () => {
@@ -11,11 +11,8 @@ export const SidebarLogo = () => {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton size="lg" onClick={() => router.push('/dashboard')}>
-          <Image src="/logo.png" alt="Logo" width={32} height={32} />
-          <div className="grid flex-1 text-left text-md">
-            <span className="truncate font-semibold">Chronos</span>
-          </div>
+        <SidebarMenuButton size="lg" onClick={() => router.push('/dashboard')} className="gap-0.5">
+          <Logo asChild />
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
